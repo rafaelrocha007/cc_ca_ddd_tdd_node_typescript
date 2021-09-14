@@ -3,7 +3,7 @@ import EnrollStudent from "./EnrollStudent";
 describe("Enroll Student use case", () => {
   test("Should not enroll student without valid student name", () => {
     const sut = new EnrollStudent();
-    
+
     expect(() =>
       sut.execute({
         student: {
@@ -29,35 +29,67 @@ describe("Enroll Student use case", () => {
     const sut = new EnrollStudent();
     sut.execute({
       student: {
-        name: "Ana Silva",
-        cpf: "832.081.519-34",
+        name: "Maria Carolina Fonseca",
+        cpf: "755.525.774-26",
+        birthDate: "2002-03-12",
       },
+      level: "EM",
+      module: "1",
+      class: "A",
     });
     expect(() =>
       sut.execute({
         student: {
-          name: "Ana Silva",
-          cpf: "832.081.519-34",
+          name: "Maria Carolina Fonseca",
+          cpf: "755.525.774-26",
+          birthDate: "2002-03-12",
         },
+        level: "EM",
+        module: "1",
+        class: "A",
       })
     ).toThrow(new Error("Enrollment with duplicated student is not allowed"));
   });
 
   test("Should enroll a valid student", () => {
     const sut = new EnrollStudent();
-    const enrollResult1 = sut.execute({
+    sut.execute({
       student: {
-        name: "Ana Silva",
-        cpf: "832.081.519-34",
+        name: "Maria Carolina Fonseca",
+        cpf: "755.525.774-26",
+        birthDate: "2002-03-12",
       },
+      level: "EM",
+      module: "1",
+      class: "A",
     });
-    expect(enrollResult1).toBe(true);
-    const enrollResult2 = sut.execute({
+    expect(sut.enrollments.length).toBe(1);
+    sut.execute({
       student: {
         name: "Rafael Rocha",
         cpf: "088.192.736-83",
+        birthDate: "2002-09-13",
       },
+      level: "EM",
+      module: "1",
+      class: "A",
     });
-    expect(enrollResult2).toBe(true);
+    expect(sut.enrollments.length).toBe(2);
+  });
+
+  test("Should generate enrollment code", () => {
+    const sut = new EnrollStudent();
+    sut.execute({
+      student: {
+        name: "Maria Carolina Fonseca",
+        cpf: "755.525.774-26",
+        birthDate: "2002-03-12",
+      },
+      level: "EM",
+      module: "1",
+      class: "A",
+    });
+
+    expect(sut.enrollments[0].code).toBe("2021EM1A0001");
   });
 });
