@@ -34,7 +34,7 @@ describe("Enroll Student use case", () => {
         birthDate: "2002-03-12",
       },
       level: "EM",
-      module: "1",
+      module: "3",
       class: "A",
     });
     expect(() =>
@@ -45,7 +45,7 @@ describe("Enroll Student use case", () => {
           birthDate: "2002-03-12",
         },
         level: "EM",
-        module: "1",
+        module: "3",
         class: "A",
       })
     ).toThrow(new Error("Enrollment with duplicated student is not allowed"));
@@ -60,7 +60,7 @@ describe("Enroll Student use case", () => {
         birthDate: "2002-03-12",
       },
       level: "EM",
-      module: "1",
+      module: "3",
       class: "A",
     });
     expect(sut.enrollments.length).toBe(1);
@@ -71,7 +71,7 @@ describe("Enroll Student use case", () => {
         birthDate: "2002-09-13",
       },
       level: "EM",
-      module: "1",
+      module: "3",
       class: "A",
     });
     expect(sut.enrollments.length).toBe(2);
@@ -86,10 +86,63 @@ describe("Enroll Student use case", () => {
         birthDate: "2002-03-12",
       },
       level: "EM",
-      module: "1",
+      module: "3",
       class: "A",
     });
 
-    expect(sut.enrollments[0].code).toBe("2021EM1A0001");
+    expect(sut.enrollments[0].code).toBe("2021EM3A0001");
+  });
+
+  test("Should not enroll student below minimum age", () => {
+    const sut = new EnrollStudent();
+    expect(() => {
+      sut.execute({
+        student: {
+          name: "Maria Carolina Fonseca",
+          cpf: "755.525.774-26",
+          birthDate: "2010-03-12",
+        },
+        level: "EM",
+        module: "3",
+        class: "A",
+      });
+    }).toThrow(new Error("Student below minimum age"));
+  });
+
+  test("Should not enroll student over class capacity", () => {
+    const sut = new EnrollStudent();
+
+    expect(() => {
+      sut.execute({
+        student: {
+          name: "Aluno Teste Um",
+          cpf: "755.525.774-26",
+          birthDate: "2002-03-12",
+        },
+        level: "EM",
+        module: "3",
+        class: "A",
+      });
+      sut.execute({
+        student: {
+          name: "Aluno Teste Dois",
+          cpf: "75706622027",
+          birthDate: "2002-03-12",
+        },
+        level: "EM",
+        module: "3",
+        class: "A",
+      });
+      sut.execute({
+        student: {
+          name: "Aluno Teste Três",
+          cpf: "90287586073",
+          birthDate: "2002-03-12",
+        },
+        level: "EM",
+        module: "3",
+        class: "A",
+      });
+    }).toThrow(new Error("Class is over capacity"));
   });
 });
