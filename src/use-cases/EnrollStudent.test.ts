@@ -27,7 +27,7 @@ describe("Enroll Student use case", () => {
 
   test("Should not enroll duplicated student", () => {
     const sut = new EnrollStudent();
-    sut.execute({
+    const enrollmentRequest = {
       student: {
         name: "Maria Carolina Fonseca",
         cpf: "755.525.774-26",
@@ -36,19 +36,11 @@ describe("Enroll Student use case", () => {
       level: "EM",
       module: "3",
       class: "A",
-    });
-    expect(() =>
-      sut.execute({
-        student: {
-          name: "Maria Carolina Fonseca",
-          cpf: "755.525.774-26",
-          birthDate: "2002-03-12",
-        },
-        level: "EM",
-        module: "3",
-        class: "A",
-      })
-    ).toThrow(new Error("Enrollment with duplicated student is not allowed"));
+    };
+    sut.execute(enrollmentRequest);
+    expect(() => sut.execute(enrollmentRequest)).toThrow(
+      new Error("Enrollment with duplicated student is not allowed")
+    );
   });
 
   test("Should enroll a valid student", () => {

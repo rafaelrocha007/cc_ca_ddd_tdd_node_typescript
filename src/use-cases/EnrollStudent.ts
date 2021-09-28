@@ -29,23 +29,21 @@ export default class EnrollStudent {
     const module = data.modules.find(
       (mod) => mod.code === moduleCode && mod.level === levelCode
     );
-    const studentAge = new Age(new Date(enrollmentRequest.student.birthDate));
     if (!module) {
       throw new Error("Module not found");
     }
+    const studentAge = new Age(new Date(enrollmentRequest.student.birthDate));
     if (module.minimumAge > studentAge.value) {
       throw new Error("Student below minimum age");
     }
-    // console.log('request', levelCode, moduleCode, classCode);
     const currentClass = data.classes.find(
       (classItem) =>
         classItem.code === classCode &&
         classItem.module === moduleCode &&
         classItem.level === levelCode
     );
-    if (!currentClass) {
-      throw new Error("Class not found");
-    }
+    if (!currentClass) throw new Error("Class not found");
+
     const classEnrollments = this.enrollments.filter(
       (enrollment) =>
         enrollment.class === classCode &&
