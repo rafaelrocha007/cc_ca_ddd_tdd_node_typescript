@@ -1,11 +1,23 @@
+import EnrollmentRepository from "../EnrollmentRepository";
+import EnrollmentRepositoryMemory from "../EnrollmentRepositoryMemory";
+import LevelRepository from "../LevelRepository";
+import LevelRepositoryMemory from "../LevelRepositoryMemory";
 import EnrollStudent from "./EnrollStudent";
 
-describe("Enroll Student use case", () => {
-  test("Should not enroll student without valid student name", () => {
-    const sut = new EnrollStudent();
+let enrollmentRepository: EnrollmentRepository;
+let levelRepository: LevelRepository;
 
+let enrollStudent: EnrollStudent;
+describe("Enroll Student use case", () => {
+  beforeEach(function () {
+    enrollmentRepository = new EnrollmentRepositoryMemory();
+    levelRepository = new LevelRepositoryMemory();
+    enrollStudent = new EnrollStudent(levelRepository, enrollmentRepository);
+  });
+
+  test("Should not enroll student without valid student name", () => {
     expect(() =>
-      sut.execute({
+      enrollStudent.execute({
         student: {
           name: "Ana",
         },
@@ -14,9 +26,8 @@ describe("Enroll Student use case", () => {
   });
 
   test("Should not enroll without valid student cpf", () => {
-    const sut = new EnrollStudent();
     expect(() =>
-      sut.execute({
+      enrollStudent.execute({
         student: {
           name: "Ana Silva",
           cpf: "123.456.789-99",
@@ -26,7 +37,6 @@ describe("Enroll Student use case", () => {
   });
 
   test("Should not enroll duplicated student", () => {
-    const sut = new EnrollStudent();
     const enrollmentRequest = {
       student: {
         name: "Maria Carolina Fonseca",
@@ -37,15 +47,14 @@ describe("Enroll Student use case", () => {
       module: "3",
       class: "A",
     };
-    sut.execute(enrollmentRequest);
-    expect(() => sut.execute(enrollmentRequest)).toThrow(
+    enrollStudent.execute(enrollmentRequest);
+    expect(() => enrollStudent.execute(enrollmentRequest)).toThrow(
       new Error("Enrollment with duplicated student is not allowed")
     );
   });
 
   test("Should enroll a valid student", () => {
-    const sut = new EnrollStudent();
-    sut.execute({
+    enrollStudent.execute({
       student: {
         name: "Maria Carolina Fonseca",
         cpf: "755.525.774-26",
@@ -55,8 +64,8 @@ describe("Enroll Student use case", () => {
       module: "3",
       class: "A",
     });
-    expect(sut.enrollments.length).toBe(1);
-    sut.execute({
+    expect(enrollmentRepository.enrollments.length).toBe(1);
+    enrollStudent.execute({
       student: {
         name: "Rafael Rocha",
         cpf: "088.192.736-83",
@@ -66,12 +75,11 @@ describe("Enroll Student use case", () => {
       module: "3",
       class: "A",
     });
-    expect(sut.enrollments.length).toBe(2);
+    expect(enrollmentRepository.enrollments.length).toBe(2);
   });
 
   test("Should generate enrollment code", () => {
-    const sut = new EnrollStudent();
-    sut.execute({
+    enrollStudent.execute({
       student: {
         name: "Maria Carolina Fonseca",
         cpf: "755.525.774-26",
@@ -82,13 +90,12 @@ describe("Enroll Student use case", () => {
       class: "A",
     });
 
-    expect(sut.enrollments[0].code).toBe("2021EM3A0001");
+    expect(enrollmentRepository.enrollments[0].code).toBe("2021EM3A0001");
   });
 
   test("Should not enroll student below minimum age", () => {
-    const sut = new EnrollStudent();
     expect(() => {
-      sut.execute({
+      enrollStudent.execute({
         student: {
           name: "Maria Carolina Fonseca",
           cpf: "755.525.774-26",
@@ -102,10 +109,8 @@ describe("Enroll Student use case", () => {
   });
 
   test("Should not enroll student over class capacity", () => {
-    const sut = new EnrollStudent();
-
     expect(() => {
-      sut.execute({
+      enrollStudent.execute({
         student: {
           name: "Aluno Teste Um",
           cpf: "755.525.774-26",
@@ -115,7 +120,7 @@ describe("Enroll Student use case", () => {
         module: "3",
         class: "A",
       });
-      sut.execute({
+      enrollStudent.execute({
         student: {
           name: "Aluno Teste Dois",
           cpf: "75706622027",
@@ -125,7 +130,7 @@ describe("Enroll Student use case", () => {
         module: "3",
         class: "A",
       });
-      sut.execute({
+      enrollStudent.execute({
         student: {
           name: "Aluno Teste Três",
           cpf: "90287586073",
