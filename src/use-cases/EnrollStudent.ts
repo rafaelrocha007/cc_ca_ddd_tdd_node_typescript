@@ -1,24 +1,27 @@
 import EnrollmentCode from "../EnrollmentCode";
 import Student from "../Student";
-import data from "../Data";
 import Age from "../Age";
 import EnrollmentRepository from "../EnrollmentRepository";
 import LevelRepository from "../LevelRepository";
 import ModuleRepository from "../ModuleRepository";
+import ClassRepository from "./ClassRepository";
 
 export default class EnrollStudent {
-  enrollmentRepository: EnrollmentRepository;
-  levelRepository: LevelRepository;
   moduleRepository: ModuleRepository;
+  levelRepository: LevelRepository;
+  classRepository: ClassRepository;
+  enrollmentRepository: EnrollmentRepository;
 
   constructor(
     levelRepository: LevelRepository,
     moduleRepository: ModuleRepository,
+    classRepository: ClassRepository,
     enrollmentRepository: EnrollmentRepository
   ) {
-    this.enrollmentRepository = enrollmentRepository;
     this.levelRepository = levelRepository;
     this.moduleRepository = moduleRepository;
+    this.classRepository = classRepository;
+    this.enrollmentRepository = enrollmentRepository;
   }
 
   execute(enrollmentRequest: any) {
@@ -31,10 +34,11 @@ export default class EnrollStudent {
       enrollmentRequest.level,
       enrollmentRequest.module
     );
-    const clazz = data.classes.find(
-      (classItem) => classItem.code === enrollmentRequest.class
+    const clazz = this.classRepository.findByCode(
+      level.code,
+      module.code,
+      enrollmentRequest.class
     );
-    if (!clazz) throw new Error("Class not found");
     const studentAge = new Age(new Date(enrollmentRequest.student.birthDate));
     if (module.minimumAge > studentAge.value) {
       throw new Error("Student below minimum age");
@@ -52,19 +56,12 @@ export default class EnrollStudent {
       clazz.code,
       (this.enrollmentRepository.count() + 1).toString()
     ).value;
-    const currentClass = data.classes.find(
-      (classItem) =>
-        classItem.code === clazz.code &&
-        classItem.module === module.code &&
-        classItem.level === level.code
-    );
-    if (!currentClass) throw new Error("Class not found");
     const studentsEnrolledInClass = this.enrollmentRepository.findAllByClass(
       level.code,
       module.code,
       clazz.code
     );
-    if (studentsEnrolledInClass.length > currentClass.capacity - 1) {
+    if (studentsEnrolledInClass.length > clazz.capacity - 1) {
       throw new Error("Class is over capacity");
     }
     const enrollment = {

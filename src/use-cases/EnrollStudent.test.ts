@@ -4,10 +4,13 @@ import LevelRepository from "../LevelRepository";
 import LevelRepositoryMemory from "../LevelRepositoryMemory";
 import ModuleRepository from "../ModuleRepository";
 import ModuleRepositoryMemory from "../ModuleRepositoryMemory";
+import ClassRepository from "./ClassRepository";
+import ClassRepositoryMemory from "./ClassRepositoryMemory";
 import EnrollStudent from "./EnrollStudent";
 
 let enrollmentRepository: EnrollmentRepository;
 let levelRepository: LevelRepository;
+let classRepository: ClassRepository;
 let moduleRepository: ModuleRepository;
 
 let enrollStudent: EnrollStudent;
@@ -15,10 +18,12 @@ describe("Enroll Student use case", () => {
   beforeEach(function () {
     enrollmentRepository = new EnrollmentRepositoryMemory();
     levelRepository = new LevelRepositoryMemory();
+    classRepository = new ClassRepositoryMemory();
     moduleRepository = new ModuleRepositoryMemory();
     enrollStudent = new EnrollStudent(
       levelRepository,
       moduleRepository,
+      classRepository,
       enrollmentRepository
     );
   });
