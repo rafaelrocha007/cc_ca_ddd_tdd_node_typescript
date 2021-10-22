@@ -2,17 +2,25 @@ import EnrollmentRepository from "../EnrollmentRepository";
 import EnrollmentRepositoryMemory from "../EnrollmentRepositoryMemory";
 import LevelRepository from "../LevelRepository";
 import LevelRepositoryMemory from "../LevelRepositoryMemory";
+import ModuleRepository from "../ModuleRepository";
+import ModuleRepositoryMemory from "../ModuleRepositoryMemory";
 import EnrollStudent from "./EnrollStudent";
 
 let enrollmentRepository: EnrollmentRepository;
 let levelRepository: LevelRepository;
+let moduleRepository: ModuleRepository;
 
 let enrollStudent: EnrollStudent;
 describe("Enroll Student use case", () => {
   beforeEach(function () {
     enrollmentRepository = new EnrollmentRepositoryMemory();
     levelRepository = new LevelRepositoryMemory();
-    enrollStudent = new EnrollStudent(levelRepository, enrollmentRepository);
+    moduleRepository = new ModuleRepositoryMemory();
+    enrollStudent = new EnrollStudent(
+      levelRepository,
+      moduleRepository,
+      enrollmentRepository
+    );
   });
 
   test("Should not enroll student without valid student name", () => {

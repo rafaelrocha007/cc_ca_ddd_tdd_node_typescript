@@ -4,18 +4,21 @@ import data from "../Data";
 import Age from "../Age";
 import EnrollmentRepository from "../EnrollmentRepository";
 import LevelRepository from "../LevelRepository";
-import LevelRepositoryMemory from "../LevelRepositoryMemory";
+import ModuleRepository from "../ModuleRepository";
 
 export default class EnrollStudent {
   enrollmentRepository: EnrollmentRepository;
   levelRepository: LevelRepository;
+  moduleRepository: ModuleRepository;
 
   constructor(
     levelRepository: LevelRepository,
+    moduleRepository: ModuleRepository,
     enrollmentRepository: EnrollmentRepository
   ) {
     this.enrollmentRepository = enrollmentRepository;
     this.levelRepository = levelRepository;
+    this.moduleRepository = moduleRepository;
   }
 
   execute(enrollmentRequest: any) {
@@ -24,14 +27,10 @@ export default class EnrollStudent {
       enrollmentRequest.student.cpf
     );
     const level = this.levelRepository.findByCode(enrollmentRequest.level);
-    const module = data.modules.find(
-      (mod) =>
-        mod.code === enrollmentRequest.module &&
-        mod.level === enrollmentRequest.level
+    const module = this.moduleRepository.findByCode(
+      enrollmentRequest.level,
+      enrollmentRequest.module
     );
-    if (!module) {
-      throw new Error("Module not found");
-    }
     const clazz = data.classes.find(
       (classItem) => classItem.code === enrollmentRequest.class
     );
