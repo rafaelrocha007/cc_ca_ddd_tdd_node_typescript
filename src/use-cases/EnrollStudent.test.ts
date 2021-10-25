@@ -4,8 +4,8 @@ import LevelRepository from "../LevelRepository";
 import LevelRepositoryMemory from "../LevelRepositoryMemory";
 import ModuleRepository from "../ModuleRepository";
 import ModuleRepositoryMemory from "../ModuleRepositoryMemory";
-import ClassRepository from "./ClassRepository";
-import ClassRepositoryMemory from "./ClassRepositoryMemory";
+import ClassRepository from "../ClassRepository";
+import ClassRepositoryMemory from "../ClassRepositoryMemory";
 import EnrollStudent from "./EnrollStudent";
 
 let enrollmentRepository: EnrollmentRepository;
@@ -156,7 +156,7 @@ describe("Enroll Student use case", () => {
     }).toThrow(new Error("Class is over capacity"));
   });
   test("Should not enroll after the end of the class", () => {
-    expect(
+    expect(() => {
       enrollStudent.execute({
         student: {
           name: "Maria Carolina Fonseca",
@@ -164,9 +164,9 @@ describe("Enroll Student use case", () => {
           birthDate: "2002-03-12",
         },
         level: "EM",
-        module: "1",
+        module: "3",
         class: "B",
-      })
-    ).toThrow(new Error("Class is already finished"));
+      });
+    }).toThrow(new Error("Class is already finished"));
   });
 });

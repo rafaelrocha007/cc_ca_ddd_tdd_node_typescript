@@ -3,7 +3,7 @@ import Student from "../Student";
 import EnrollmentRepository from "../EnrollmentRepository";
 import LevelRepository from "../LevelRepository";
 import ModuleRepository from "../ModuleRepository";
-import ClassRepository from "./ClassRepository";
+import ClassRepository from "../ClassRepository";
 import Enrollment from "../Enrollment";
 
 export default class EnrollStudent {
@@ -40,6 +40,10 @@ export default class EnrollStudent {
       module.code,
       enrollmentRequest.class
     );
+    const classEndDate = new Date(clazz.end_date);
+    if (this.dateDiffInDays(new Date(), classEndDate) < 0) {
+      throw new Error("Class is already finished");
+    }
     if (student.getAge() < module.minimumAge) {
       throw new Error("Student below minimum age");
     }
@@ -68,20 +72,25 @@ export default class EnrollStudent {
       student,
       level.code,
       module.code,
-      clazz.code, 
+      clazz.code,
       code
     );
-    // const enrollment = {
-    //   student: {
-    //     name: enrollmentRequest.student.name,
-    //     cpf: enrollmentRequest.student.cpf,
-    //   },
-    //   level: level.code,
-    //   module: module.code,
-    //   class: clazz.code,
-    //   code,
-    // };
     this.enrollmentRepository.save(enrollment);
     return true;
   }
+
+  private dateDiffInDays = (date1: Date, date2: Date) => {
+    const _MS_PER_DAY = 1000 * 60 * 60 * 24;
+    const utc1 = Date.UTC(
+      date1.getFullYear(),
+      date1.getMonth(),
+      date1.getDate()
+    );
+    const utc2 = Date.UTC(
+      date2.getFullYear(),
+      date2.getMonth(),
+      date2.getDate()
+    );
+    return Math.floor((utc2 - utc1) / _MS_PER_DAY);
+  };
 }
