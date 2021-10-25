@@ -155,4 +155,18 @@ describe("Enroll Student use case", () => {
       });
     }).toThrow(new Error("Class is over capacity"));
   });
+  test("Should not enroll after the end of the class", () => {
+    expect(
+      enrollStudent.execute({
+        student: {
+          name: "Maria Carolina Fonseca",
+          cpf: "755.525.774-26",
+          birthDate: "2002-03-12",
+        },
+        level: "EM",
+        module: "1",
+        class: "B",
+      })
+    ).toThrow(new Error("Class is already finished"));
+  });
 });
