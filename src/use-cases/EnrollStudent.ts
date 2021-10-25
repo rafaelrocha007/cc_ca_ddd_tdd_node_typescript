@@ -1,10 +1,10 @@
 import EnrollmentCode from "../EnrollmentCode";
 import Student from "../Student";
-import Age from "../Age";
 import EnrollmentRepository from "../EnrollmentRepository";
 import LevelRepository from "../LevelRepository";
 import ModuleRepository from "../ModuleRepository";
 import ClassRepository from "./ClassRepository";
+import Enrollment from "../Enrollment";
 
 export default class EnrollStudent {
   moduleRepository: ModuleRepository;
@@ -27,7 +27,8 @@ export default class EnrollStudent {
   execute(enrollmentRequest: any) {
     const student = new Student(
       enrollmentRequest.student.name,
-      enrollmentRequest.student.cpf
+      enrollmentRequest.student.cpf,
+      enrollmentRequest.student.birthDate
     );
     const level = this.levelRepository.findByCode(enrollmentRequest.level);
     const module = this.moduleRepository.findByCode(
@@ -39,8 +40,7 @@ export default class EnrollStudent {
       module.code,
       enrollmentRequest.class
     );
-    const studentAge = new Age(new Date(enrollmentRequest.student.birthDate));
-    if (module.minimumAge > studentAge.value) {
+    if (student.getAge() < module.minimumAge) {
       throw new Error("Student below minimum age");
     }
     const existingEnrollment = this.enrollmentRepository.findByCpf(
@@ -64,16 +64,23 @@ export default class EnrollStudent {
     if (studentsEnrolledInClass.length > clazz.capacity - 1) {
       throw new Error("Class is over capacity");
     }
-    const enrollment = {
-      student: {
-        name: enrollmentRequest.student.name,
-        cpf: enrollmentRequest.student.cpf,
-      },
-      level: level.code,
-      module: module.code,
-      class: clazz.code,
-      code,
-    };
+    const enrollment = new Enrollment(
+      student,
+      level.code,
+      module.code,
+      clazz.code, 
+      code
+    );
+    // const enrollment = {
+    //   student: {
+    //     name: enrollmentRequest.student.name,
+    //     cpf: enrollmentRequest.student.cpf,
+    //   },
+    //   level: level.code,
+    //   module: module.code,
+    //   class: clazz.code,
+    //   code,
+    // };
     this.enrollmentRepository.save(enrollment);
     return true;
   }

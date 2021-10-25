@@ -4,10 +4,17 @@ export default class Age {
   constructor(birthDate: Date) {
     const today = new Date();
     let age = today.getFullYear() - birthDate.getFullYear();
-    var m = today.getMonth() - birthDate.getMonth();
-    if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
+    const remaingMonthsToBirthday = today.getMonth() - birthDate.getMonth();
+    const beforeBirthday =
+      remaingMonthsToBirthday < 0 ||
+      (remaingMonthsToBirthday === 0 && today.getDate() < birthDate.getDate());
+    if (beforeBirthday) {
       age--;
     }
     this.value = age;
+  }
+
+  toString(): string {
+    return this.value.toString();
   }
 }
