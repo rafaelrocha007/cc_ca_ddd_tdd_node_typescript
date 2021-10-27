@@ -44,6 +44,13 @@ export default class EnrollStudent {
     if (this.dateDiffInDays(new Date(), classEndDate) < 0) {
       throw new Error("Class is already finished");
     }
+    const classStartDate = new Date(clazz.start_date);
+    const totalDays = this.dateDiffInDays(classStartDate, classEndDate);
+    const classDaysTillNow = this.dateDiffInDays(classStartDate, new Date());
+    const classPercentageDone = (classDaysTillNow / totalDays) * 100;
+    if (classPercentageDone >= 25) {
+      throw new Error("Class is already started");
+    }
     if (student.getAge() < module.minimumAge) {
       throw new Error("Student below minimum age");
     }

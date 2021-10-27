@@ -169,4 +169,18 @@ describe("Enroll Student use case", () => {
       });
     }).toThrow(new Error("Class is already finished"));
   });
+  test("Should not enroll after 25% of the total hours of the course", () => {
+    expect(() => {
+      enrollStudent.execute({
+        student: {
+          name: "Maria Carolina Fonseca",
+          cpf: "755.525.774-26",
+          birthDate: "2002-03-12",
+        },
+        level: "EM",
+        module: "3",
+        class: "C",
+      });
+    }).toThrow(new Error("Class is already started"));
+  });
 });
