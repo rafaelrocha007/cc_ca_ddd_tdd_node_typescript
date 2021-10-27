@@ -7,6 +7,7 @@ import ModuleRepositoryMemory from "../ModuleRepositoryMemory";
 import ClassRepository from "../ClassRepository";
 import ClassRepositoryMemory from "../ClassRepositoryMemory";
 import EnrollStudent from "./EnrollStudent";
+import Invoice from "../Invoice";
 
 let enrollmentRepository: EnrollmentRepository;
 let levelRepository: LevelRepository;
@@ -183,19 +184,28 @@ describe("Enroll Student use case", () => {
       });
     }).toThrow(new Error("Class is already started"));
   });
-  test("Should generate the invoices based on the number of installments, rounding each amount and applying the rest in the last invoice", () => {
-    expect(() => {
-      enrollStudent.execute({
-        student: {
-          name: "Maria Carolina Fonseca",
-          cpf: "755.525.774-26",
-          birthDate: "2002-03-12",
-        },
-        level: "EM",
-        module: "1",
-        class: "A",
-        installments: 12,
-      });
-    }).toThrow(new Error("Class is already started"));
+  test.only("Should generate the invoices based on the number of installments, rounding each amount and applying the rest in the last invoice", () => {
+    const cpf = "755.525.774-26";
+    const installments = 12;
+    enrollStudent.execute({
+      student: {
+        name: "Maria Carolina Fonseca",
+        cpf,
+        birthDate: "2002-03-12",
+      },
+      level: "EM",
+      module: "3",
+      class: "A",
+      installments,
+    });
+    const module = moduleRepository.findByCode("EM", "3");
+    const enrollment = enrollmentRepository.findByCpf(cpf);
+    expect(enrollment?.invoices.length).toBe(installments);
+    enrollment?.invoices.map((inv) => console.log(inv.amount));
+    expect(
+      enrollment?.invoices.reduce((total, invoice) => {
+        return total + invoice.amount;
+      }, 0)
+    ).toBe(module.price);
   });
 });
