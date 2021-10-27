@@ -1,3 +1,4 @@
+import Invoice from "./Invoice";
 import Student from "./Student";
 
 export default class Enrollment {
@@ -6,6 +7,7 @@ export default class Enrollment {
   module: string;
   clazz: string;
   code: string;
+  invoices: Invoice[];
 
   constructor(
     student: Student,
@@ -19,9 +21,14 @@ export default class Enrollment {
     this.module = module;
     this.clazz = clazz;
     this.code = code;
+    this.invoices = new Array<Invoice>();
   }
 
   getEnrollmentCode(): string {
     return this.code;
+  }
+
+  addInvoice(invoice: Invoice) {
+    this.invoices.push(invoice);
   }
 }

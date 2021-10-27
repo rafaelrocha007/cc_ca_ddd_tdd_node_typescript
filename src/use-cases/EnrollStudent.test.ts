@@ -183,4 +183,19 @@ describe("Enroll Student use case", () => {
       });
     }).toThrow(new Error("Class is already started"));
   });
+  test("Should generate the invoices based on the number of installments, rounding each amount and applying the rest in the last invoice", () => {
+    expect(() => {
+      enrollStudent.execute({
+        student: {
+          name: "Maria Carolina Fonseca",
+          cpf: "755.525.774-26",
+          birthDate: "2002-03-12",
+        },
+        level: "EM",
+        module: "1",
+        class: "A",
+        installments: 12,
+      });
+    }).toThrow(new Error("Class is already started"));
+  });
 });
