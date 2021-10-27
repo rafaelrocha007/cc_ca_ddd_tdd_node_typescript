@@ -87,8 +87,9 @@ export default class EnrollStudent {
       Math.round(
         (module.price / enrollmentRequest.installments) * 100 + Number.EPSILON
       ) / 100;
-    const lastInstallmentAmount =
-      installmentAmount * (enrollmentRequest.installments - 1);
+    let lastInstallmentAmount =
+      module.price - installmentAmount * (enrollmentRequest.installments - 1);
+    lastInstallmentAmount = parseFloat(lastInstallmentAmount.toFixed(2));
     for (
       let installment = 0;
       installment < enrollmentRequest.installments - 1;

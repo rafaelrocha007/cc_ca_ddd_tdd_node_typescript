@@ -201,7 +201,6 @@ describe("Enroll Student use case", () => {
     const module = moduleRepository.findByCode("EM", "3");
     const enrollment = enrollmentRepository.findByCpf(cpf);
     expect(enrollment?.invoices.length).toBe(installments);
-    enrollment?.invoices.map((inv) => console.log(inv.amount));
     expect(
       enrollment?.invoices.reduce((total, invoice) => {
         return total + invoice.amount;
