@@ -40,11 +40,11 @@ export default class EnrollStudent {
       module.code,
       enrollmentRequest.class
     );
-    const classEndDate = new Date(classroom.end_date);
+    const classEndDate = new Date(classroom.endDate);
     if (this.dateDiffInDays(new Date(), classEndDate) < 0) {
       throw new Error("Class is already finished");
     }
-    const classStartDate = new Date(classroom.start_date);
+    const classStartDate = new Date(classroom.startDate);
     const totalDays = this.dateDiffInDays(classStartDate, classEndDate);
     const classDaysTillNow = this.dateDiffInDays(classStartDate, new Date());
     const classPercentageDone = (classDaysTillNow / totalDays) * 100;

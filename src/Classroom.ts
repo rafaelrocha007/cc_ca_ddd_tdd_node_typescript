@@ -3,29 +3,29 @@ export default class Classroom {
   module: string;
   code: string;
   capacity: number;
-  start_date: Date;
-  end_date: Date;
+  startDate: Date;
+  endDate: Date;
 
   constructor({
     level,
     module,
     code,
     capacity,
-    start_date,
-    end_date,
+    startDate,
+    endDate,
   }: {
     level: string;
     module: string;
     code: string;
     capacity: number;
-    start_date: string;
-    end_date: string;
+    startDate: string;
+    endDate: string;
   }) {
     this.level = level;
     this.module = module;
     this.code = code;
     this.capacity = capacity;
-    this.start_date = new Date(start_date);
-    this.end_date = new Date(end_date);
+    this.startDate = new Date(startDate);
+    this.endDate = new Date(endDate);
   }
 }
