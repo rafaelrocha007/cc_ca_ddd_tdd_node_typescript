@@ -184,7 +184,7 @@ describe("Enroll Student use case", () => {
       });
     }).toThrow(new Error("Class is already started"));
   });
-  test.only("Should generate the invoices based on the number of installments, rounding each amount and applying the rest in the last invoice", () => {
+  test("Should generate the invoices based on the number of installments, rounding each amount and applying the rest in the last invoice", () => {
     const cpf = "755.525.774-26";
     const installments = 12;
     enrollStudent.execute({
