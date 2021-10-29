@@ -1,9 +1,8 @@
-import EnrollmentCode from "../EnrollmentCode";
 import Student from "../Student";
 import EnrollmentRepository from "../EnrollmentRepository";
 import LevelRepository from "../LevelRepository";
 import ModuleRepository from "../ModuleRepository";
-import ClassRepository from "../ClassRepository";
+import ClassRepository from "../ClassroomRepository";
 import Enrollment from "../Enrollment";
 import Invoice from "../Invoice";
 
@@ -36,24 +35,21 @@ export default class EnrollStudent {
       enrollmentRequest.level,
       enrollmentRequest.module
     );
-    const clazz = this.classRepository.findByCode(
+    const classroom = this.classRepository.findByCode(
       level.code,
       module.code,
       enrollmentRequest.class
     );
-    const classEndDate = new Date(clazz.end_date);
+    const classEndDate = new Date(classroom.end_date);
     if (this.dateDiffInDays(new Date(), classEndDate) < 0) {
       throw new Error("Class is already finished");
     }
-    const classStartDate = new Date(clazz.start_date);
+    const classStartDate = new Date(classroom.start_date);
     const totalDays = this.dateDiffInDays(classStartDate, classEndDate);
     const classDaysTillNow = this.dateDiffInDays(classStartDate, new Date());
     const classPercentageDone = (classDaysTillNow / totalDays) * 100;
     if (classPercentageDone >= 25) {
       throw new Error("Class is already started");
-    }
-    if (student.getAge() < module.minimumAge) {
-      throw new Error("Student below minimum age");
     }
     const existingEnrollment = this.enrollmentRepository.findByCpf(
       enrollmentRequest.student.cpf
@@ -61,27 +57,23 @@ export default class EnrollStudent {
     if (existingEnrollment) {
       throw new Error("Enrollment with duplicated student is not allowed");
     }
-    const code = new EnrollmentCode(
-      new Date().getFullYear().toString(),
-      level.code,
-      module.code,
-      clazz.code,
-      (this.enrollmentRepository.count() + 1).toString()
-    ).value;
     const studentsEnrolledInClass = this.enrollmentRepository.findAllByClass(
       level.code,
       module.code,
-      clazz.code
+      classroom.code
     );
-    if (studentsEnrolledInClass.length > clazz.capacity - 1) {
+    if (studentsEnrolledInClass.length > classroom.capacity - 1) {
       throw new Error("Class is over capacity");
     }
+    const enrollmentSequence = this.enrollmentRepository.count() + 1;
+    const issueDate = new Date();
     const enrollment = new Enrollment(
       student,
-      level.code,
-      module.code,
-      clazz.code,
-      code
+      level,
+      module,
+      classroom,
+      issueDate,
+      enrollmentSequence
     );
     const installmentAmount =
       Math.round(

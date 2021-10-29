@@ -1,39 +1,40 @@
-import ClassRepository from "./ClassRepository";
+import Classroom from "./Classroom";
+import ClassRepository from "./ClassroomRepository";
 
 export default class ClassRepositoryMemory implements ClassRepository {
-  classes: any[];
+  classrooms: Classroom[];
 
   constructor() {
-    this.classes = [
-      {
+    this.classrooms = [
+      new Classroom({
         level: "EM",
         module: "3",
         code: "A",
         capacity: 2,
         start_date: "2021-10-15",
         end_date: "2021-12-15",
-      },
-      {
+      }),
+      new Classroom({
         level: "EM",
         module: "3",
         code: "B",
         capacity: 5,
         start_date: "2021-05-01",
         end_date: "2021-05-30",
-      },
-      {
+      }),
+      new Classroom({
         level: "EM",
         module: "3",
         code: "C",
         capacity: 5,
         start_date: "2021-05-01",
         end_date: "2021-11-30",
-      },
+      }),
     ];
   }
 
-  findByCode(level: string, module: string, code: string) {
-    const clazz = this.classes.find(
+  findByCode(level: string, module: string, code: string): Classroom {
+    const clazz = this.classrooms.find(
       (clazz: any) =>
         clazz.code === code && clazz.module === module && clazz.level === level
     );

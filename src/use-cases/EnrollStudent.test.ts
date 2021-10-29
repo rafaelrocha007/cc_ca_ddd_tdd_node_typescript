@@ -4,8 +4,8 @@ import LevelRepository from "../LevelRepository";
 import LevelRepositoryMemory from "../LevelRepositoryMemory";
 import ModuleRepository from "../ModuleRepository";
 import ModuleRepositoryMemory from "../ModuleRepositoryMemory";
-import ClassRepository from "../ClassRepository";
-import ClassRepositoryMemory from "../ClassRepositoryMemory";
+import ClassRepository from "../ClassroomRepository";
+import ClassRepositoryMemory from "../ClassroomRepositoryMemory";
 import EnrollStudent from "./EnrollStudent";
 import Invoice from "../Invoice";
 
@@ -104,7 +104,7 @@ describe("Enroll Student use case", () => {
       class: "A",
     });
 
-    expect(enrollmentRepository.enrollments[0].code).toBe("2021EM3A0001");
+    expect(enrollmentRepository.enrollments[0].getCode()).toBe("2021EM3A0001");
   });
 
   test("Should not enroll student below minimum age", () => {
