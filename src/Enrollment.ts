@@ -26,6 +26,12 @@ export default class Enrollment {
     if (student.getAge() < module.minimumAge) {
       throw new Error("Student below minimum age");
     }
+    if (classroom.isFinished(issueDate)) {
+      throw new Error("Class is already finished");
+    }
+    if (classroom.getProgress(issueDate) > 25) {
+      throw new Error("Class is already started");
+    }
     this.student = student;
     this.level = level;
     this.module = module;

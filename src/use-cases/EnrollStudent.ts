@@ -40,17 +40,6 @@ export default class EnrollStudent {
       module.code,
       enrollmentRequest.class
     );
-    const classEndDate = new Date(classroom.endDate);
-    if (this.dateDiffInDays(new Date(), classEndDate) < 0) {
-      throw new Error("Class is already finished");
-    }
-    const classStartDate = new Date(classroom.startDate);
-    const totalDays = this.dateDiffInDays(classStartDate, classEndDate);
-    const classDaysTillNow = this.dateDiffInDays(classStartDate, new Date());
-    const classPercentageDone = (classDaysTillNow / totalDays) * 100;
-    if (classPercentageDone >= 25) {
-      throw new Error("Class is already started");
-    }
     const existingEnrollment = this.enrollmentRepository.findByCpf(
       enrollmentRequest.student.cpf
     );
@@ -95,19 +84,4 @@ export default class EnrollStudent {
     this.enrollmentRepository.save(enrollment);
     return true;
   }
-
-  private dateDiffInDays = (date1: Date, date2: Date) => {
-    const _MS_PER_DAY = 1000 * 60 * 60 * 24;
-    const utc1 = Date.UTC(
-      date1.getFullYear(),
-      date1.getMonth(),
-      date1.getDate()
-    );
-    const utc2 = Date.UTC(
-      date2.getFullYear(),
-      date2.getMonth(),
-      date2.getDate()
-    );
-    return Math.floor((utc2 - utc1) / _MS_PER_DAY);
-  };
 }
