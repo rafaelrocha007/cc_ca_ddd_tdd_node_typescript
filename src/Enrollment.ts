@@ -59,16 +59,14 @@ export default class Enrollment {
   generateInvoices() {
     const installmentAmount =
       Math.trunc((this.module.price / this.installments) * 100) / 100;
-    let lastInstallmentAmount =
-      this.module.price - installmentAmount * (this.installments - 1);
-    lastInstallmentAmount = parseFloat(lastInstallmentAmount.toFixed(2));
-    for (
-      let installment = 1;
-      installment <= this.installments - 1;
-      installment++
-    ) {
+    for (let installment = 1; installment <= this.installments; installment++) {
       this.invoices.push(new Invoice(installment, installmentAmount));
     }
-    this.invoices.push(new Invoice(this.installments, lastInstallmentAmount));
+    const total = this.invoices.reduce((total, invoice) => {
+      total += invoice.amount;
+      return total;
+    }, 0);
+    const rest = Math.trunc((this.module.price - total) * 100) / 100;
+    this.invoices[this.invoices.length - 1].amount += rest;
   }
 }
