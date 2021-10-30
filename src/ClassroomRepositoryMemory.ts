@@ -11,7 +11,7 @@ export default class ClassRepositoryMemory implements ClassRepository {
         module: "3",
         code: "A",
         capacity: 2,
-        startDate: new Date("2021-10-15"),
+        startDate: new Date("2021-10-25"),
         endDate: new Date("2021-12-15"),
       }),
       new Classroom({

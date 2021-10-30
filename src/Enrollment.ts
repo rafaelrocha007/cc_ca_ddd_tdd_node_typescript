@@ -14,6 +14,7 @@ export default class Enrollment {
   sequence: number;
   issueDate: Date;
   invoices: Invoice[];
+  installments: number;
 
   constructor(
     student: Student,
@@ -21,7 +22,8 @@ export default class Enrollment {
     module: Module,
     classroom: Classroom,
     issueDate: Date,
-    sequence: number
+    sequence: number,
+    installments: number
   ) {
     if (student.getAge() < module.minimumAge) {
       throw new Error("Student below minimum age");
@@ -38,8 +40,8 @@ export default class Enrollment {
     this.classroom = classroom;
     this.sequence = sequence;
     this.issueDate = issueDate;
-    this.invoices = new Array<Invoice>();
-
+    this.invoices = [];
+    this.installments = installments;
     this.code = new EnrollmentCode(
       level.code,
       module.code,
@@ -47,13 +49,26 @@ export default class Enrollment {
       issueDate,
       sequence
     );
+    this.generateInvoices();
   }
 
   getCode(): string {
     return this.code.value;
   }
 
-  addInvoice(invoice: Invoice) {
-    this.invoices.push(invoice);
+  generateInvoices() {
+    const installmentAmount =
+      Math.trunc((this.module.price / this.installments) * 100) / 100;
+    let lastInstallmentAmount =
+      this.module.price - installmentAmount * (this.installments - 1);
+    lastInstallmentAmount = parseFloat(lastInstallmentAmount.toFixed(2));
+    for (
+      let installment = 1;
+      installment <= this.installments - 1;
+      installment++
+    ) {
+      this.invoices.push(new Invoice(installment, installmentAmount));
+    }
+    this.invoices.push(new Invoice(this.installments, lastInstallmentAmount));
   }
 }

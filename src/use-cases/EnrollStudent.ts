@@ -4,7 +4,6 @@ import LevelRepository from "../LevelRepository";
 import ModuleRepository from "../ModuleRepository";
 import ClassRepository from "../ClassroomRepository";
 import Enrollment from "../Enrollment";
-import Invoice from "../Invoice";
 
 export default class EnrollStudent {
   moduleRepository: ModuleRepository;
@@ -62,24 +61,8 @@ export default class EnrollStudent {
       module,
       classroom,
       issueDate,
-      enrollmentSequence
-    );
-    const installmentAmount =
-      Math.round(
-        (module.price / enrollmentRequest.installments) * 100 + Number.EPSILON
-      ) / 100;
-    let lastInstallmentAmount =
-      module.price - installmentAmount * (enrollmentRequest.installments - 1);
-    lastInstallmentAmount = parseFloat(lastInstallmentAmount.toFixed(2));
-    for (
-      let installment = 0;
-      installment < enrollmentRequest.installments - 1;
-      installment++
-    ) {
-      enrollment.addInvoice(new Invoice(installment, installmentAmount));
-    }
-    enrollment.addInvoice(
-      new Invoice(enrollmentRequest.installments, lastInstallmentAmount)
+      enrollmentSequence,
+      enrollmentRequest.installments
     );
     this.enrollmentRepository.save(enrollment);
     return true;
