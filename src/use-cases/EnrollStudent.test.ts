@@ -7,7 +7,6 @@ import ModuleRepositoryMemory from "../ModuleRepositoryMemory";
 import ClassRepository from "../ClassroomRepository";
 import ClassRepositoryMemory from "../ClassroomRepositoryMemory";
 import EnrollStudent from "./EnrollStudent";
-import Invoice from "../Invoice";
 
 let enrollmentRepository: EnrollmentRepository;
 let levelRepository: LevelRepository;
@@ -156,6 +155,7 @@ describe("Enroll Student use case", () => {
       });
     }).toThrow(new Error("Class is over capacity"));
   });
+
   test("Should not enroll after the end of the class", () => {
     expect(() => {
       enrollStudent.execute({
@@ -170,6 +170,7 @@ describe("Enroll Student use case", () => {
       });
     }).toThrow(new Error("Class is already finished"));
   });
+
   test("Should not enroll after 25% of the total hours of the course", () => {
     expect(() => {
       enrollStudent.execute({
@@ -184,6 +185,7 @@ describe("Enroll Student use case", () => {
       });
     }).toThrow(new Error("Class is already started"));
   });
+
   test("Should generate the invoices based on the number of installments, rounding each amount and applying the rest in the last invoice", () => {
     const cpf = "755.525.774-26";
     const installments = 12;
@@ -200,7 +202,7 @@ describe("Enroll Student use case", () => {
     });
     const module = moduleRepository.findByCode("EM", "3");
     const enrollment = enrollmentRepository.findByCpf(cpf);
-    expect(enrollment?.invoices.length).toBe(installments);
+    expect(enrollment?.invoices).toHaveLength(installments);
     expect(
       enrollment?.invoices.reduce((total, invoice) => {
         return total + invoice.amount;

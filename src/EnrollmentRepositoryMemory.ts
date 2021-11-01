@@ -23,6 +23,14 @@ export default class EnrollmentRepositoryMemory
     );
   }
 
+  findByCode(code: string): Enrollment | null {
+    const enrollment = this.enrollments.find(
+      (enrollment: Enrollment) => enrollment.getCode() === code
+    );
+    if (enrollment) return enrollment;
+    return null;
+  }
+
   findByCpf(cpf: string): Enrollment | null {
     const enrollment = this.enrollments.find(
       (enrollment: Enrollment) => enrollment.student.cpf.value === cpf

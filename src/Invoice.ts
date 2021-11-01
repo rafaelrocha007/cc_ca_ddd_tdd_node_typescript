@@ -1,9 +1,13 @@
 export default class Invoice {
-  installment: number;
+  code: string;
+  month: number;
+  year: number;
   amount: number;
 
-  constructor(installment: number, amount: number) {
-    this.installment = installment;
+  constructor(code: string, month: number, year: number, amount: number) {
+    this.code = code;
+    this.month = month;
+    this.year = year;
     this.amount = amount;
   }
 }

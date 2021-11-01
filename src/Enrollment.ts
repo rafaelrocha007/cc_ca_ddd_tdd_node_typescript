@@ -15,6 +15,7 @@ export default class Enrollment {
   issueDate: Date;
   invoices: Invoice[];
   installments: number;
+  balance: number = 0;
 
   constructor(
     student: Student,
@@ -23,7 +24,7 @@ export default class Enrollment {
     classroom: Classroom,
     issueDate: Date,
     sequence: number,
-    installments: number
+    installments: number = 12
   ) {
     if (student.getAge() < module.minimumAge) {
       throw new Error("Student below minimum age");
@@ -50,6 +51,7 @@ export default class Enrollment {
       sequence
     );
     this.generateInvoices();
+    this.setInitialBalance();
   }
 
   getCode(): string {
@@ -60,13 +62,31 @@ export default class Enrollment {
     const installmentAmount =
       Math.trunc((this.module.price / this.installments) * 100) / 100;
     for (let installment = 1; installment <= this.installments; installment++) {
-      this.invoices.push(new Invoice(installment, installmentAmount));
+      this.invoices.push(
+        new Invoice(
+          this.code.value,
+          installment,
+          this.issueDate.getFullYear(),
+          installmentAmount
+        )
+      );
     }
     const total = this.invoices.reduce((total, invoice) => {
       total += invoice.amount;
       return total;
     }, 0);
-    const rest = Math.trunc((this.module.price - total) * 100) / 100;
+    const rest = parseFloat((this.module.price - total).toFixed(2));
     this.invoices[this.invoices.length - 1].amount += rest;
+  }
+
+  getBalance(): number {
+    return this.balance;
+  }
+
+  setInitialBalance() {
+    this.balance = this.invoices.reduce((total, invoice) => {
+      total += invoice.amount;
+      return total;
+    }, 0);
   }
 }
