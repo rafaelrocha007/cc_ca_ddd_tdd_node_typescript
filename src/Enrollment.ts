@@ -6,6 +6,9 @@ import Module from "./Module";
 import Student from "./Student";
 
 export default class Enrollment {
+  static readonly STATUS_ACTIVE = "active";
+  static readonly STATUS_CANCELLED = "cancelled";
+
   student: Student;
   level: Level;
   module: Module;
@@ -16,6 +19,7 @@ export default class Enrollment {
   invoices: Invoice[];
   installments: number;
   balance: number = 0;
+  status: string;
 
   constructor(
     student: Student,
@@ -50,6 +54,7 @@ export default class Enrollment {
       issueDate,
       sequence
     );
+    this.status = Enrollment.STATUS_ACTIVE;
     this.generateInvoices();
   }
 

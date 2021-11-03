@@ -14,6 +14,13 @@ export default class EnrollmentRepositoryMemory
     this.enrollments.push(enrollment);
   }
 
+  updateStatus(code: string, status: string): void {
+    let foundIndex = this.enrollments.findIndex(
+      (enrollment) => enrollment.getCode() === code
+    );
+    this.enrollments[foundIndex].status = Enrollment.STATUS_CANCELLED;
+  }
+
   findAllByClass(level: string, module: string, clazz: string): Enrollment[] {
     return this.enrollments.filter(
       (enrollment: Enrollment) =>
@@ -23,12 +30,14 @@ export default class EnrollmentRepositoryMemory
     );
   }
 
-  findByCode(code: string): Enrollment | null {
+  findByCode(code: string): Enrollment {
     const enrollment = this.enrollments.find(
       (enrollment: Enrollment) => enrollment.getCode() === code
     );
-    if (enrollment) return enrollment;
-    return null;
+    if (!enrollment) {
+      throw new Error("Enrollment not found");
+    }
+    return enrollment;
   }
 
   findByCpf(cpf: string): Enrollment | null {

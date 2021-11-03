@@ -39,6 +39,9 @@ export default class PayInvoice {
     if (originalInvoice.amount != amount) {
       throw new Error("Only full installment amount is accepted");
     }
-    enrollment.invoices[foundIndex].status = Invoice.STATUS_PAID;
+    enrollment.invoices[foundIndex] = {
+      ...originalInvoice,
+      status: Invoice.STATUS_PAID,
+    };
   }
 }

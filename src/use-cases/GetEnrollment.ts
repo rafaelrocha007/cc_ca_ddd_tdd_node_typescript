@@ -17,9 +17,6 @@ export default class GetEnrollment {
 
   execute({ code }: { code: string }): Enrollment {
     const enrollment = this.enrollmentRepository.findByCode(code);
-    if (!enrollment) {
-      throw new Error("Enrollment not found");
-    }
     const invoices = this.invoiceRepository.findAllByEnrollmentCode(code);
     const paidInvoicesAmount = invoices.reduce((total, invoice) => {
       if (invoice.status === Invoice.STATUS_PAID) total += invoice.amount;
