@@ -51,7 +51,6 @@ export default class Enrollment {
       sequence
     );
     this.generateInvoices();
-    this.setInitialBalance();
   }
 
   getCode(): string {
@@ -64,7 +63,7 @@ export default class Enrollment {
     for (let installment = 1; installment <= this.installments; installment++) {
       this.invoices.push(
         new Invoice(
-          this.code.value,
+          this.getCode(),
           installment,
           this.issueDate.getFullYear(),
           installmentAmount
@@ -80,13 +79,11 @@ export default class Enrollment {
   }
 
   getBalance(): number {
-    return this.balance;
-  }
-
-  setInitialBalance() {
-    this.balance = this.invoices.reduce((total, invoice) => {
-      total += invoice.amount;
-      return total;
-    }, 0);
+    return (
+      this.invoices.reduce((total, invoice) => {
+        total += invoice.status === Invoice.STATUS_PAID ? invoice.amount : 0;
+        return total;
+      }, 0) - this.module.price
+    );
   }
 }
