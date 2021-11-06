@@ -1,7 +1,7 @@
 import Classroom from "./Classroom";
-import ClassRepository from "./ClassroomRepository";
+import ClassroomRepository from "./ClassroomRepository";
 
-export default class ClassRepositoryMemory implements ClassRepository {
+export default class ClassroomRepositoryMemory implements ClassroomRepository {
   classrooms: Classroom[];
 
   constructor() {

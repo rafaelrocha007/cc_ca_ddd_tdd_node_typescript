@@ -30,7 +30,7 @@ export default class EnrollmentRepositoryMemory
     );
   }
 
-  findByCode(code: string): Enrollment {
+  get(code: string): Enrollment {
     const enrollment = this.enrollments.find(
       (enrollment: Enrollment) => enrollment.getCode() === code
     );

@@ -1,31 +1,11 @@
-import EnrollmentRepository from "../EnrollmentRepository";
-import EnrollmentRepositoryMemory from "../EnrollmentRepositoryMemory";
-import LevelRepository from "../LevelRepository";
-import LevelRepositoryMemory from "../LevelRepositoryMemory";
-import ModuleRepository from "../ModuleRepository";
-import ModuleRepositoryMemory from "../ModuleRepositoryMemory";
-import ClassRepository from "../ClassroomRepository";
-import ClassRepositoryMemory from "../ClassroomRepositoryMemory";
 import EnrollStudent from "./EnrollStudent";
-
-let enrollmentRepository: EnrollmentRepository;
-let levelRepository: LevelRepository;
-let classRepository: ClassRepository;
-let moduleRepository: ModuleRepository;
+import RepositoryMemoryFactory from "../RepositoryMemoryFactory";
 
 let enrollStudent: EnrollStudent;
+
 describe("Enroll Student use case", () => {
   beforeEach(function () {
-    enrollmentRepository = new EnrollmentRepositoryMemory();
-    levelRepository = new LevelRepositoryMemory();
-    classRepository = new ClassRepositoryMemory();
-    moduleRepository = new ModuleRepositoryMemory();
-    enrollStudent = new EnrollStudent(
-      levelRepository,
-      moduleRepository,
-      classRepository,
-      enrollmentRepository
-    );
+    enrollStudent = new EnrollStudent(new RepositoryMemoryFactory());
   });
 
   test("Should not enroll student without valid student name", () => {
@@ -77,7 +57,7 @@ describe("Enroll Student use case", () => {
       module: "3",
       class: "A",
     });
-    expect(enrollmentRepository.enrollments.length).toBe(1);
+    expect(enrollStudent.enrollmentRepository.enrollments.length).toBe(1);
     enrollStudent.execute({
       student: {
         name: "Rafael Rocha",
@@ -88,7 +68,7 @@ describe("Enroll Student use case", () => {
       module: "3",
       class: "A",
     });
-    expect(enrollmentRepository.enrollments.length).toBe(2);
+    expect(enrollStudent.enrollmentRepository.enrollments.length).toBe(2);
   });
 
   test("Should generate enrollment code", () => {
@@ -103,7 +83,9 @@ describe("Enroll Student use case", () => {
       class: "A",
     });
 
-    expect(enrollmentRepository.enrollments[0].getCode()).toBe("2021EM3A0001");
+    expect(enrollStudent.enrollmentRepository.enrollments[0].getCode()).toBe(
+      "2021EM3A0001"
+    );
   });
 
   test("Should not enroll student below minimum age", () => {
@@ -200,8 +182,8 @@ describe("Enroll Student use case", () => {
       class: "A",
       installments,
     });
-    const module = moduleRepository.findByCode("EM", "3");
-    const enrollment = enrollmentRepository.findByCpf(cpf);
+    const module = enrollStudent.moduleRepository.findByCode("EM", "3");
+    const enrollment = enrollStudent.enrollmentRepository.findByCpf(cpf);
     expect(enrollment?.invoices).toHaveLength(installments);
     expect(
       enrollment?.invoices.reduce((total, invoice) => {

@@ -1,17 +1,15 @@
 import EnrollmentRepository from "../EnrollmentRepository";
 import Invoice from "../Invoice";
 import InvoiceRepository from "../InvoiceRepository";
+import RepositoryAbstractFactory from "../RepositoryAbstractFactory";
 
 export default class PayInvoice {
   enrollmentRepository: EnrollmentRepository;
   invoiceRepository: InvoiceRepository;
 
-  constructor(
-    enrollmentRepository: EnrollmentRepository,
-    invoiceRepository: InvoiceRepository
-  ) {
-    this.enrollmentRepository = enrollmentRepository;
-    this.invoiceRepository = invoiceRepository;
+  constructor(repositoryFactory: RepositoryAbstractFactory) {
+    this.enrollmentRepository = repositoryFactory.createEnrollmentRepository();
+    this.invoiceRepository = repositoryFactory.createInvoiceRepository();
   }
 
   execute({
@@ -25,7 +23,7 @@ export default class PayInvoice {
     year: number;
     amount: number;
   }) {
-    const enrollment = this.enrollmentRepository.findByCode(code);
+    const enrollment = this.enrollmentRepository.get(code);
     if (!enrollment) {
       throw new Error("Enrollment not found");
     }
