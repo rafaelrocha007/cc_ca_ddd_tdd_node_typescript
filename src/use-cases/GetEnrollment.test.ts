@@ -30,4 +30,23 @@ describe("Enroll Student use case", () => {
     expect(getEnrollmentOutputData.code).toBe("2021EM3A0001");
     expect(getEnrollmentOutputData.balance).toBe(17000);
   });
+
+  test("Should calculate penalty and interests", () => {
+    const cpf = "755.525.774-26";
+    const installments = 12;
+    enrollStudent.execute({
+      student: {
+        name: "Maria Carolina Fonseca",
+        cpf,
+        birthDate: "2002-03-12",
+      },
+      level: "EM",
+      module: "3",
+      class: "A",
+      installments,
+    });
+    const getEnrollmentOutputData = getEnrollment.execute("2021EM3A0001");
+    expect(getEnrollmentOutputData.code).toBe("2021EM3A0001");
+    expect(getEnrollmentOutputData.balance).toBe(17000);
+  });
 });

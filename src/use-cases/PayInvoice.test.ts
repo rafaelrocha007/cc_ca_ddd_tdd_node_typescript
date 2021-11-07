@@ -2,6 +2,7 @@ import EnrollStudent from "./EnrollStudent";
 import GetEnrollment from "./GetEnrollment";
 import PayInvoice from "./PayInvoice";
 import RepositoryMemoryFactory from "../RepositoryMemoryFactory";
+import Invoice from "../Invoice";
 
 let enrollStudent: EnrollStudent;
 let getEnrollment: GetEnrollment;
@@ -62,5 +63,30 @@ describe("Enroll Student use case", () => {
     const getEnrollmentOutputData = getEnrollment.execute("2021EM3A0001");
     const totalPaidInvoices = 17000 - 1416.66;
     expect(getEnrollmentOutputData.balance).toBe(totalPaidInvoices);
+  });
+
+  test("Should calculate due date and return status open or overdue for each invoice", () => {
+    const cpf = "755.525.774-26";
+    const installments = 12;
+    enrollStudent.execute({
+      student: {
+        name: "Maria Carolina Fonseca",
+        cpf,
+        birthDate: "2002-03-12",
+      },
+      level: "EM",
+      module: "3",
+      class: "A",
+      installments,
+    });
+
+    payInvoice.execute({
+      code: "2021EM3A0001",
+      month: 1,
+      year: 2021,
+      amount: 1416.66,
+    });
+    const { invoices } = getEnrollment.execute("2021EM3A0001");
+    expect(invoices[0].status).toBe(Invoice.STATUS_OVERDUE);
   });
 });
