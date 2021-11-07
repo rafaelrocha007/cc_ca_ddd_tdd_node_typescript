@@ -27,19 +27,6 @@ export default class PayInvoice {
     if (!enrollment) {
       throw new Error("Enrollment not found");
     }
-    let foundIndex = enrollment.invoices.findIndex(
-      (invoice) =>
-        invoice.code === code &&
-        invoice.month === month &&
-        invoice.year === year
-    );
-    const originalInvoice = enrollment.invoices[foundIndex];
-    if (originalInvoice.amount != amount) {
-      throw new Error("Only full installment amount is accepted");
-    }
-    enrollment.invoices[foundIndex] = {
-      ...originalInvoice,
-      status: Invoice.STATUS_PAID,
-    };
+    enrollment.payInvoice(month, year, amount);
   }
 }

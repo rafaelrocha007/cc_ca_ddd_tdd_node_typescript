@@ -1,7 +1,5 @@
-import EnrollmentRepository from "../EnrollmentRepository";
 import EnrollStudent from "./EnrollStudent";
 import GetEnrollment from "./GetEnrollment";
-import InvoiceRepository from "../InvoiceRepository";
 import PayInvoice from "./PayInvoice";
 import RepositoryMemoryFactory from "../RepositoryMemoryFactory";
 
@@ -61,9 +59,8 @@ describe("Enroll Student use case", () => {
       year: 2021,
       amount: 1416.66,
     });
-    const enrollment = getEnrollment.execute("2021EM3A0001");
-    const module = enrollStudent.moduleRepository.findByCode("EM", "3");
-    const totalPaidInvoices = 1416.66;
-    expect(enrollment.balance).toBe(totalPaidInvoices - module.price);
+    const getEnrollmentOutputData = getEnrollment.execute("2021EM3A0001");
+    const totalPaidInvoices = 17000 - 1416.66;
+    expect(getEnrollmentOutputData.balance).toBe(totalPaidInvoices);
   });
 });

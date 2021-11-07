@@ -1,9 +1,9 @@
 import ClassroomRepository from "./ClassroomRepository";
 import ClassroomRepositoryMemory from "./ClassroomRepositoryMemory";
 import EnrollmentRepository from "./EnrollmentRepository";
-import EnrollmentRepositoryMemory from "./EnrollmentRepositoryMemory";
+import EnrollmentRepositoryMemorySingleton from "./EnrollmentRepositoryMemorySingleton";
 import InvoiceRepository from "./InvoiceRepository";
-import InvoiceRepositoryMemory from "./InvoiceRepositoryMemory";
+import InvoiceRepositoryMemorySingleton from "./InvoiceRepositoryMemorySingleton";
 import LevelRepository from "./LevelRepository";
 import LevelRepositoryMemory from "./LevelRepositoryMemory";
 import ModuleRepository from "./ModuleRepository";
@@ -13,8 +13,10 @@ import RepositoryAbstractFactory from "./RepositoryAbstractFactory";
 export default class RepositoryMemoryFactory
   implements RepositoryAbstractFactory
 {
-  enrollmentRepository: EnrollmentRepository = new EnrollmentRepositoryMemory();
-  invoiceRepository: InvoiceRepository = new InvoiceRepositoryMemory();
+  constructor() {
+    EnrollmentRepositoryMemorySingleton.destroy();
+    InvoiceRepositoryMemorySingleton.destroy();
+  }
 
   createLevelRepository(): LevelRepository {
     return new LevelRepositoryMemory();
@@ -29,16 +31,10 @@ export default class RepositoryMemoryFactory
   }
 
   createEnrollmentRepository(): EnrollmentRepository {
-    if (!this.enrollmentRepository) {
-      this.enrollmentRepository = new EnrollmentRepositoryMemory();
-    }
-    return this.enrollmentRepository;
+    return EnrollmentRepositoryMemorySingleton.getInstance();
   }
 
   createInvoiceRepository(): InvoiceRepository {
-    if (!this.invoiceRepository) {
-      this.invoiceRepository = new InvoiceRepositoryMemory();
-    }
-    return this.invoiceRepository;
+    return InvoiceRepositoryMemorySingleton.getInstance();
   }
 }

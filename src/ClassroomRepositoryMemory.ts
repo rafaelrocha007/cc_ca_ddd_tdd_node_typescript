@@ -12,7 +12,7 @@ export default class ClassroomRepositoryMemory implements ClassroomRepository {
         code: "A",
         capacity: 2,
         startDate: new Date("2021-10-25"),
-        endDate: new Date("2021-12-15"),
+        endDate: new Date("2022-10-25"),
       }),
       new Classroom({
         level: "EM",

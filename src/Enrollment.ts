@@ -1,6 +1,7 @@
 import Classroom from "./Classroom";
 import EnrollmentCode from "./EnrollmentCode";
 import Invoice from "./Invoice";
+import InvoiceEvent from "./InvoiceEvent";
 import Level from "./Level";
 import Module from "./Module";
 import Student from "./Student";
@@ -83,12 +84,28 @@ export default class Enrollment {
     this.invoices[this.invoices.length - 1].amount += rest;
   }
 
-  getBalance(): number {
-    return (
-      this.invoices.reduce((total, invoice) => {
-        total += invoice.status === Invoice.STATUS_PAID ? invoice.amount : 0;
-        return total;
-      }, 0) - this.module.price
+  getInvoiceBalance(): number {
+    return this.invoices.reduce((total, invoice) => {
+      total += invoice.getBalance();
+      return total;
+    }, 0);
+  }
+
+  getInvoice(month: number, year: number): Invoice {
+    const invoice = this.invoices.find(
+      (invoice) => invoice.month === month && invoice.year === year
     );
+    if (!invoice) {
+      throw new Error("Invalid invoice");
+    }
+    return invoice;
+  }
+
+  payInvoice(month: number, year: number, amount: number) {
+    const invoice = this.getInvoice(month, year);
+    if (invoice.amount != amount) {
+      throw new Error("Only full installment amount is accepted");
+    }
+    invoice.addEvent(new InvoiceEvent("payment", amount));
   }
 }
