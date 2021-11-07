@@ -1,14 +1,11 @@
 import EnrollmentRepository from "../EnrollmentRepository";
-import InvoiceRepository from "../InvoiceRepository";
 import RepositoryAbstractFactory from "../RepositoryAbstractFactory";
 
 export default class GetEnrollment {
   enrollmentRepository: EnrollmentRepository;
-  invoiceRepository: InvoiceRepository;
 
   constructor(repositoryFactory: RepositoryAbstractFactory) {
     this.enrollmentRepository = repositoryFactory.createEnrollmentRepository();
-    this.invoiceRepository = repositoryFactory.createInvoiceRepository();
   }
 
   execute(code: string): any {
@@ -16,7 +13,14 @@ export default class GetEnrollment {
     return {
       code: enrollment.getCode(),
       balance: enrollment.getInvoiceBalance(),
-      status: enrollment.status
+      invoices: enrollment.invoices.map((invoice) => ({
+        amount: invoice.amount,
+        // penalty: invoice.getPenalty(),
+        // interest: invoice.getInterest(),
+        status: invoice.getStatus(),
+        dueDate: invoice.getDueDate(),
+      })),
+      status: enrollment.status,
     };
   }
 }
