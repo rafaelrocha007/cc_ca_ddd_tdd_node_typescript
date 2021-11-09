@@ -64,8 +64,7 @@ export default class Enrollment {
   }
 
   generateInvoices() {
-    const installmentAmount =
-      Math.trunc((this.module.price / this.installments) * 100) / 100;
+    const installmentAmount = Math.trunc(this.module.price / this.installments);
     for (let installment = 1; installment <= this.installments; installment++) {
       this.invoices.push(
         new Invoice(
@@ -80,13 +79,13 @@ export default class Enrollment {
       total += invoice.amount;
       return total;
     }, 0);
-    const rest = parseFloat((this.module.price - total).toFixed(2));
+    const rest = this.module.price - total;
     this.invoices[this.invoices.length - 1].amount += rest;
   }
 
-  getInvoiceBalance(): number {
+  getInvoiceBalance(currentDate: Date): number {
     return this.invoices.reduce((total, invoice) => {
-      total += invoice.getBalance();
+      total += invoice.getBalance(currentDate);
       return total;
     }, 0);
   }
@@ -101,11 +100,13 @@ export default class Enrollment {
     return invoice;
   }
 
-  payInvoice(month: number, year: number, amount: number) {
+  payInvoice(month: number, year: number, amount: number, currentDate: Date) {
     const invoice = this.getInvoice(month, year);
-    if (invoice.amount != amount) {
+    if (invoice.getBalance(currentDate) != amount) {
       throw new Error("Only full installment amount is accepted");
     }
-    invoice.addEvent(new InvoiceEvent("payment", amount));
+    invoice.addEvent(new InvoiceEvent("payment", invoice.amount));
+    invoice.addEvent(new InvoiceEvent("interest", invoice.getInterest(currentDate)));
+    invoice.addEvent(new InvoiceEvent("penalty", invoice.getPenalty(currentDate)));
   }
 }

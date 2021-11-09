@@ -23,16 +23,22 @@ export default class Invoice {
     this.events.push(invoiceEvent);
   }
 
-  getBalance() {
-    return this.events.reduce((total, invoiceEvent) => {
-      return (total -= invoiceEvent.amount);
-    }, this.amount);
+  getBalance(requestDate: Date) {
+    const totalAmount =
+      this.amount +
+      this.getPenalty(requestDate) +
+      this.getInterest(requestDate);
+
+    const eventsTotalAmount = this.events.reduce((total, invoiceEvent) => {
+      return (total += invoiceEvent.amount);
+    }, 0);
+
+    return totalAmount - eventsTotalAmount;
   }
 
-  getStatus() {
-    const now = new Date();
+  getStatus(requestDate: Date) {
     const dueDate = this.getDueDate();
-    const overduePeriod = new Period(dueDate, now);
+    const overduePeriod = new Period(dueDate, requestDate);
 
     if (overduePeriod.getDiffInDays() > 0) {
       return Invoice.STATUS_OVERDUE;
@@ -42,5 +48,21 @@ export default class Invoice {
 
   getDueDate() {
     return new Date(this.year, this.month, 5);
+  }
+
+  getPenalty(requestDate: Date) {
+    if (this.getStatus(requestDate) === Invoice.STATUS_OPEN) {
+      return 0;
+    }
+    return Math.trunc(this.amount * 0.1);
+  }
+
+  getInterest(requestDate: Date) {
+    if (this.getStatus(requestDate) === Invoice.STATUS_OPEN) {
+      return 0;
+    }
+    const overduePeriod = new Period(this.getDueDate(), requestDate);
+    const interestAmount = this.amount * 0.01 * overduePeriod.getDiffInDays();
+    return Math.trunc(interestAmount);
   }
 }

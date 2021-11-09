@@ -8,16 +8,16 @@ export default class GetEnrollment {
     this.enrollmentRepository = repositoryFactory.createEnrollmentRepository();
   }
 
-  execute(code: string): any {
+  execute(code: string, currentDate: Date): any {
     const enrollment = this.enrollmentRepository.get(code);
     return {
       code: enrollment.getCode(),
-      balance: enrollment.getInvoiceBalance(),
+      balance: enrollment.getInvoiceBalance(currentDate),
       invoices: enrollment.invoices.map((invoice) => ({
         amount: invoice.amount,
-        // penalty: invoice.getPenalty(),
-        // interest: invoice.getInterest(),
-        status: invoice.getStatus(),
+        penaltyAmount: invoice.getPenalty(currentDate),
+        interest: invoice.getInterest(currentDate),
+        status: invoice.getStatus(currentDate),
         dueDate: invoice.getDueDate(),
       })),
       status: enrollment.status,

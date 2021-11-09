@@ -1,5 +1,4 @@
 import EnrollmentRepository from "../EnrollmentRepository";
-import Invoice from "../Invoice";
 import InvoiceRepository from "../InvoiceRepository";
 import RepositoryAbstractFactory from "../RepositoryAbstractFactory";
 
@@ -17,16 +16,18 @@ export default class PayInvoice {
     month,
     year,
     amount,
+    requestDate,
   }: {
     code: string;
     month: number;
     year: number;
     amount: number;
+    requestDate: Date;
   }) {
     const enrollment = this.enrollmentRepository.get(code);
     if (!enrollment) {
       throw new Error("Enrollment not found");
     }
-    enrollment.payInvoice(month, year, amount);
+    enrollment.payInvoice(month, year, amount, requestDate);
   }
 }
