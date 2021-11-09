@@ -2,6 +2,7 @@ import EnrollStudent from "./EnrollStudent";
 import GetEnrollment from "./GetEnrollment";
 import PayInvoice from "./PayInvoice";
 import RepositoryMemoryFactory from "../RepositoryMemoryFactory";
+import Invoice from "../Invoice";
 
 let enrollStudent: EnrollStudent;
 let getEnrollment: GetEnrollment;
@@ -72,28 +73,21 @@ describe("Enroll Student use case", () => {
     expect(paidInvoice.getBalance(mockedDate)).toBe(0);
   });
 
-  // test("Should calculate due date and return status open or overdue for each invoice", () => {
-  //   const cpf = "755.525.774-26";
-  //   const installments = 12;
-  //   enrollStudent.execute({
-  //     student: {
-  //       name: "Maria Carolina Fonseca",
-  //       cpf,
-  //       birthDate: "2002-03-12",
-  //     },
-  //     level: "EM",
-  //     module: "3",
-  //     class: "A",
-  //     installments,
-  //   });
-  //   payInvoice.execute({
-  //     code: "2021EM3A0001",
-  //     month: 1,
-  //     year: 2021,
-  //     amount: 155832,
-  //     requestDate: mockedDate,
-  //   });
-  //   const { invoices } = getEnrollment.execute("2021EM3A0001", mockedDate);
-  //   expect(invoices[0].status).toBe(Invoice.STATUS_OVERDUE);
-  // });
+  test("Should calculate due date and return status open or overdue for each invoice", () => {
+    const cpf = "755.525.774-26";
+    const installments = 12;
+    enrollStudent.execute({
+      student: {
+        name: "Maria Carolina Fonseca",
+        cpf,
+        birthDate: "2002-03-12",
+      },
+      level: "EM",
+      module: "3",
+      class: "A",
+      installments,
+    });
+    const { invoices } = getEnrollment.execute("2021EM3A0001", mockedDate);
+    expect(invoices[0].status).toBe(Invoice.STATUS_OVERDUE);
+  });
 });
