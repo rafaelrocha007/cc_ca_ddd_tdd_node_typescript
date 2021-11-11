@@ -106,7 +106,11 @@ export default class Enrollment {
       throw new Error("Only full installment amount is accepted");
     }
     invoice.addEvent(new InvoiceEvent("payment", invoice.amount));
-    invoice.addEvent(new InvoiceEvent("interest", invoice.getInterest(currentDate)));
-    invoice.addEvent(new InvoiceEvent("penalty", invoice.getPenalty(currentDate)));
+    invoice.addEvent(
+      new InvoiceEvent("interest", invoice.getInterest(currentDate))
+    );
+    invoice.addEvent(
+      new InvoiceEvent("penalty", invoice.getPenalty(currentDate))
+    );
   }
 }

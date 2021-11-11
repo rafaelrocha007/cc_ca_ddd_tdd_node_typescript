@@ -47,7 +47,7 @@ export default class Invoice {
   }
 
   getDueDate() {
-    return new Date(this.year, this.month, 5);
+    return new Date(this.year + "-" + this.month + "-" + "05");
   }
 
   getPenalty(requestDate: Date) {

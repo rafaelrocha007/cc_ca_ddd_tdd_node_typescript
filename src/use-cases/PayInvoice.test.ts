@@ -15,7 +15,7 @@ describe("Enroll Student use case", () => {
     enrollStudent = new EnrollStudent(repositoryFactory);
     getEnrollment = new GetEnrollment(repositoryFactory);
     payInvoice = new PayInvoice(repositoryFactory);
-    mockedDate = new Date(2021, 1, 10);
+    mockedDate = new Date('2021-01-10');
   });
 
   test("Should not pay an enrollment invoice without full installment amount", () => {
@@ -59,7 +59,7 @@ describe("Enroll Student use case", () => {
     });
     const invoiceAmount = 141666;
     const penaltyAmount = 14166;
-    const interestAmount = 7083;
+    const interestAmount = 6906;
     payInvoice.execute({
       code: "2021EM3A0001",
       month: 1,
@@ -71,23 +71,5 @@ describe("Enroll Student use case", () => {
     const paidInvoice = enrollment.invoices[0];
     expect(paidInvoice.events).toHaveLength(3);
     expect(paidInvoice.getBalance(mockedDate)).toBe(0);
-  });
-
-  test("Should calculate due date and return status open or overdue for each invoice", () => {
-    const cpf = "755.525.774-26";
-    const installments = 12;
-    enrollStudent.execute({
-      student: {
-        name: "Maria Carolina Fonseca",
-        cpf,
-        birthDate: "2002-03-12",
-      },
-      level: "EM",
-      module: "3",
-      class: "A",
-      installments,
-    });
-    const { invoices } = getEnrollment.execute("2021EM3A0001", mockedDate);
-    expect(invoices[0].status).toBe(Invoice.STATUS_OVERDUE);
   });
 });

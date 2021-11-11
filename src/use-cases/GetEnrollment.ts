@@ -18,7 +18,7 @@ export default class GetEnrollment {
         penaltyAmount: invoice.getPenalty(currentDate),
         interest: invoice.getInterest(currentDate),
         status: invoice.getStatus(currentDate),
-        dueDate: invoice.getDueDate(),
+        dueDate: invoice.getDueDate().toISOString().split('T')[0],
       })),
       status: enrollment.status,
     };
