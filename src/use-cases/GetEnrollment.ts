@@ -1,4 +1,5 @@
 import EnrollmentRepository from "../EnrollmentRepository";
+import GetEnrollmentOutputData from "../GetEnrollmentOutputData";
 import RepositoryAbstractFactory from "../RepositoryAbstractFactory";
 
 export default class GetEnrollment {
@@ -8,9 +9,9 @@ export default class GetEnrollment {
     this.enrollmentRepository = repositoryFactory.createEnrollmentRepository();
   }
 
-  execute(code: string, currentDate: Date): any {
+  execute(code: string, currentDate: Date): GetEnrollmentOutputData {
     const enrollment = this.enrollmentRepository.get(code);
-    return {
+    const getEnrollmentOutputData = new GetEnrollmentOutputData({
       code: enrollment.getCode(),
       balance: enrollment.getInvoiceBalance(currentDate),
       invoices: enrollment.invoices.map((invoice) => ({
@@ -18,9 +19,10 @@ export default class GetEnrollment {
         penaltyAmount: invoice.getPenalty(currentDate),
         interest: invoice.getInterest(currentDate),
         status: invoice.getStatus(currentDate),
-        dueDate: invoice.getDueDate().toISOString().split('T')[0],
+        dueDate: invoice.getDueDate().toISOString().split("T")[0],
       })),
       status: enrollment.status,
-    };
+    });
+    return getEnrollmentOutputData;
   }
 }
