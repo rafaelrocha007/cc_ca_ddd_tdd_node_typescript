@@ -83,9 +83,9 @@ export default class Enrollment {
     this.invoices[this.invoices.length - 1].amount += rest;
   }
 
-  getInvoiceBalance(currentDate: Date): number {
+  getInvoiceBalance(): number {
     return this.invoices.reduce((total, invoice) => {
-      total += invoice.getBalance(currentDate);
+      total += invoice.getBalance();
       return total;
     }, 0);
   }
@@ -100,17 +100,18 @@ export default class Enrollment {
     return invoice;
   }
 
-  payInvoice(month: number, year: number, amount: number, currentDate: Date) {
+  payInvoice(month: number, year: number, amount: number, paymentDate: Date) {
     const invoice = this.getInvoice(month, year);
-    if (invoice.getBalance(currentDate) != amount) {
+    if (!invoice) throw new Error("Invalid invoice");
+    if (invoice.getBalance() > amount) {
       throw new Error("Only full installment amount is accepted");
     }
-    invoice.addEvent(new InvoiceEvent("payment", invoice.amount));
-    invoice.addEvent(
-      new InvoiceEvent("interest", invoice.getInterest(currentDate))
-    );
-    invoice.addEvent(
-      new InvoiceEvent("penalty", invoice.getPenalty(currentDate))
-    );
+    if (invoice.getStatus(paymentDate) === Invoice.STATUS_OVERDUE) {
+      const interest = invoice.getInterests(paymentDate);
+      const penalty = invoice.getPenalty(paymentDate);
+      invoice.addEvent(new InvoiceEvent(InvoiceEvent.TYPE_INTERESTS, interest));
+      invoice.addEvent(new InvoiceEvent(InvoiceEvent.TYPE_PENALTY, penalty));
+    }
+    invoice.addEvent(new InvoiceEvent(InvoiceEvent.TYPE_PAYMENT, amount));
   }
 }

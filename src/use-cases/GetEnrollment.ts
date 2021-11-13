@@ -13,13 +13,14 @@ export default class GetEnrollment {
     const enrollment = this.enrollmentRepository.get(code);
     const getEnrollmentOutputData = new GetEnrollmentOutputData({
       code: enrollment.getCode(),
-      balance: enrollment.getInvoiceBalance(currentDate),
+      balance: enrollment.getInvoiceBalance(),
       invoices: enrollment.invoices.map((invoice) => ({
         amount: invoice.amount,
-        penaltyAmount: invoice.getPenalty(currentDate),
-        interest: invoice.getInterest(currentDate),
+        penalty: invoice.getPenalty(currentDate),
+        interests: invoice.getInterests(currentDate),
         status: invoice.getStatus(currentDate),
-        dueDate: invoice.getDueDate().toISOString().split("T")[0],
+        dueDate: invoice.dueDate.toISOString().split("T")[0],
+        balance: invoice.getBalance(),
       })),
       status: enrollment.status,
     });

@@ -1,4 +1,8 @@
 export default class InvoiceEvent {
+  static readonly TYPE_PAYMENT = "payment";
+  static readonly TYPE_PENALTY = "penalty";
+  static readonly TYPE_INTERESTS = "interests";
+
   type: string;
   amount: number;
 

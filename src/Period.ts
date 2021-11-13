@@ -13,6 +13,6 @@ export default class Period {
 
   getDiffInDays() {
     const MILLISECONDS_IN_A_DAY = 1000 * 60 * 60 * 24;
-    return this.getDiffInMilli() / MILLISECONDS_IN_A_DAY;
+    return Math.round(this.getDiffInMilli() / MILLISECONDS_IN_A_DAY);
   }
 }

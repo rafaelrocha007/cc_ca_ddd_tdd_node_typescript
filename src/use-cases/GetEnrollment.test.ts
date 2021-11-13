@@ -60,7 +60,7 @@ describe("Enroll Student use case", () => {
 
   test("Should calculate penalty and interests", () => {
     const cpf = "755.525.774-26";
-    const installments = 12;
+    const installments = 10;
     enrollStudent.execute({
       student: {
         name: "Maria Carolina Fonseca",
@@ -79,10 +79,11 @@ describe("Enroll Student use case", () => {
     );
     expect(getEnrollmentOutputData.code).toBe("2021EM3A0001");
     const moduleAmount = 1700000;
-    const penaltyAmount = 14166;
-    const interestAmount = 6906;
-    expect(getEnrollmentOutputData.balance).toBe(
-      moduleAmount + penaltyAmount + interestAmount
-    );
+    const penaltyAmount = 17000;
+    const interestsAmount = 8500;
+    expect(getEnrollmentOutputData.balance).toBe(moduleAmount);
+    const invoice = getEnrollmentOutputData.invoices[0];
+    expect(invoice.penalty).toBe(penaltyAmount);
+    expect(invoice.interests).toBe(interestsAmount);
   });
 });

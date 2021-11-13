@@ -2,7 +2,6 @@ import EnrollStudent from "./EnrollStudent";
 import GetEnrollment from "./GetEnrollment";
 import PayInvoice from "./PayInvoice";
 import RepositoryMemoryFactory from "../RepositoryMemoryFactory";
-import Invoice from "../Invoice";
 
 let enrollStudent: EnrollStudent;
 let getEnrollment: GetEnrollment;
@@ -15,7 +14,7 @@ describe("Enroll Student use case", () => {
     enrollStudent = new EnrollStudent(repositoryFactory);
     getEnrollment = new GetEnrollment(repositoryFactory);
     payInvoice = new PayInvoice(repositoryFactory);
-    mockedDate = new Date('2021-01-10');
+    mockedDate = new Date("2021-01-10");
   });
 
   test("Should not pay an enrollment invoice without full installment amount", () => {
@@ -38,14 +37,14 @@ describe("Enroll Student use case", () => {
         month: 1,
         year: 2021,
         amount: 100000,
-        requestDate: mockedDate,
+        paymentDate: mockedDate,
       });
     }).toThrow(new Error("Only full installment amount is accepted"));
   });
 
   test("Should pay overdue invoice", () => {
     const cpf = "755.525.774-26";
-    const installments = 12;
+    const installments = 10;
     enrollStudent.execute({
       student: {
         name: "Maria Carolina Fonseca",
@@ -57,19 +56,21 @@ describe("Enroll Student use case", () => {
       class: "A",
       installments,
     });
-    const invoiceAmount = 141666;
-    const penaltyAmount = 14166;
-    const interestAmount = 6906;
+    const invoiceAmount = 170000;
+    const penaltyAmount =  17000;
+    const interestAmount =  8500;
     payInvoice.execute({
       code: "2021EM3A0001",
       month: 1,
       year: 2021,
       amount: invoiceAmount + penaltyAmount + interestAmount,
-      requestDate: mockedDate,
+      paymentDate: mockedDate,
     });
-    const enrollment = payInvoice.enrollmentRepository.get("2021EM3A0001");
-    const paidInvoice = enrollment.invoices[0];
-    expect(paidInvoice.events).toHaveLength(3);
-    expect(paidInvoice.getBalance(mockedDate)).toBe(0);
+    const getEnrollmentOutputData = getEnrollment.execute(
+      "2021EM3A0001",
+      mockedDate
+    );
+    const paidInvoice = getEnrollmentOutputData.invoices[0];
+    expect(paidInvoice.balance).toBe(0);
   });
 });
