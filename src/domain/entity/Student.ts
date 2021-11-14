@@ -1,6 +1,6 @@
-import Age from "../value-objects/Age";
-import Cpf from "../value-objects/Cpf";
-import Name from "../value-objects/Name";
+import Age from "./Age";
+import Cpf from "./Cpf";
+import Name from "./Name";
 
 export default class Student {
   name: Name;

@@ -4,7 +4,7 @@ import InvoiceEvent from "./InvoiceEvent";
 import Level from "./Level";
 import Module from "./Module";
 import Student from "./Student";
-import EnrollmentCode from "../value-objects/EnrollmentCode";
+import EnrollmentCode from "./EnrollmentCode";
 
 export default class Enrollment {
   static readonly STATUS_ACTIVE = "active";

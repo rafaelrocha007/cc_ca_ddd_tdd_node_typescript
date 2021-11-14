@@ -1,4 +1,4 @@
-import Period from "../../Period";
+import Period from "./Period";
 
 export default class Classroom {
   level: string;

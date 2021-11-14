@@ -1,4 +1,4 @@
-import Period from "../../Period";
+import Period from "./Period";
 import InvoiceEvent from "./InvoiceEvent";
 
 export default class Invoice {
