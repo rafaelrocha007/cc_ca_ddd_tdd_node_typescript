@@ -1,5 +1,6 @@
-import RepositoryAbstractFactory from "../factory/RepositoryAbstractFactory";
-import EnrollmentRepository from "../repository/EnrollmentRepository";
+import RepositoryAbstractFactory from "../../factory/RepositoryAbstractFactory";
+import EnrollmentRepository from "../../repository/EnrollmentRepository";
+import EnrollStudentOutputData from "../EnrollStudent/EnrollStudentOutputData";
 import GetEnrollmentOutputData from "./GetEnrollmentOutputData";
 
 export default class GetEnrollment {
@@ -9,8 +10,14 @@ export default class GetEnrollment {
     this.enrollmentRepository = repositoryFactory.createEnrollmentRepository();
   }
 
-  execute(code: string, currentDate: Date): GetEnrollmentOutputData {
-    const enrollment = this.enrollmentRepository.get(code);
+  async execute(
+    code: string,
+    currentDate: Date
+  ): Promise<GetEnrollmentOutputData> {
+    const enrollment = await this.enrollmentRepository.get(code);
+    if (!enrollment) {
+      throw new Error("Enrollment not found");
+    }
     const getEnrollmentOutputData = new GetEnrollmentOutputData({
       code: enrollment.getCode(),
       balance: enrollment.getInvoiceBalance(),
@@ -24,6 +31,6 @@ export default class GetEnrollment {
       })),
       status: enrollment.status,
     });
-    return getEnrollmentOutputData;
+    return Promise.resolve(getEnrollmentOutputData);
   }
 }

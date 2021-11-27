@@ -3,9 +3,7 @@ import RepositoryAbstractFactory from "../../domain/factory/RepositoryAbstractFa
 import LevelRepository from "../../domain/repository/LevelRepository";
 import ModuleRepository from "../../domain/repository/ModuleRepository";
 import ClassroomRepository from "../../domain/repository/ClassroomRepository";
-import InvoiceRepository from "../../domain/repository/InvoiceRepository";
 import ClassroomRepositoryMemory from "../repository/memory/ClassroomRepositoryMemory";
-import InvoiceRepositoryMemorySingleton from "../repository/memory/InvoiceRepositoryMemorySingleton";
 import EnrollmentRepositoryMemorySingleton from "../repository/memory/EnrollmentRepositoryMemorySingleton";
 import LevelRepositoryMemory from "../repository/memory/LevelRepositoryMemory";
 import ModuleRepositoryMemory from "../repository/memory/ModuleRepositoryMemory";
@@ -15,7 +13,6 @@ export default class RepositoryMemoryFactory
 {
   constructor() {
     EnrollmentRepositoryMemorySingleton.destroy();
-    InvoiceRepositoryMemorySingleton.destroy();
   }
 
   createLevelRepository(): LevelRepository {
@@ -32,9 +29,5 @@ export default class RepositoryMemoryFactory
 
   createEnrollmentRepository(): EnrollmentRepository {
     return EnrollmentRepositoryMemorySingleton.getInstance();
-  }
-
-  createInvoiceRepository(): InvoiceRepository {
-    return InvoiceRepositoryMemorySingleton.getInstance();
   }
 }

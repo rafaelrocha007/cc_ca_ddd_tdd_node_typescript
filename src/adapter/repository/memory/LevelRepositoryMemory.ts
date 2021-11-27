@@ -21,11 +21,11 @@ export default class LevelRepositoryMemory implements LevelRepository {
     ];
   }
 
-  findByCode(code: string): any {
+  async findByCode(code: string): Promise<Level> {
     const level = this.levels.find((lvl: any) => lvl.code === code);
     if (!level) {
       throw new Error("Level not found");
     }
-    return level;
+    return Promise.resolve(level);
   }
 }

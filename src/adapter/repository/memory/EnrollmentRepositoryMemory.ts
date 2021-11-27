@@ -10,45 +10,55 @@ export default class EnrollmentRepositoryMemory
     this.enrollments = [];
   }
 
-  save(enrollment: Enrollment): void {
+  async save(enrollment: Enrollment): Promise<void> {
     this.enrollments.push(enrollment);
   }
 
-  updateStatus(code: string, status: string): void {
+  async updateStatus(code: string, status: string): Promise<void> {
     let foundIndex = this.enrollments.findIndex(
       (enrollment) => enrollment.getCode() === code
     );
     this.enrollments[foundIndex].status = Enrollment.STATUS_CANCELLED;
   }
 
-  findAllByClass(level: string, module: string, clazz: string): Enrollment[] {
-    return this.enrollments.filter(
-      (enrollment: Enrollment) =>
-        enrollment.classroom.code === clazz &&
-        enrollment.module.code === module &&
-        enrollment.level.code === level
+  async findAllByClassroom(
+    level: string,
+    module: string,
+    clazz: string
+  ): Promise<Enrollment[]> {
+    return Promise.resolve(
+      this.enrollments.filter(
+        (enrollment: Enrollment) =>
+          enrollment.classroom.code === clazz &&
+          enrollment.module.code === module &&
+          enrollment.level.code === level
+      )
     );
   }
 
-  get(code: string): Enrollment {
+  async get(code: string): Promise<Enrollment> {
     const enrollment = this.enrollments.find(
       (enrollment: Enrollment) => enrollment.getCode() === code
     );
     if (!enrollment) {
       throw new Error("Enrollment not found");
     }
-    return enrollment;
+    return Promise.resolve(enrollment);
   }
 
-  findByCpf(cpf: string): Enrollment | null {
+  async findByCpf(cpf: string): Promise<Enrollment> {
     const enrollment = this.enrollments.find(
       (enrollment: Enrollment) => enrollment.student.cpf.value === cpf
     );
-    if (enrollment) return enrollment;
-    return null;
+    if (enrollment) return Promise.resolve(enrollment);
+    return Promise.reject(null);
   }
 
-  count(): number {
-    return this.enrollments.length;
+  async count(): Promise<number> {
+    return Promise.resolve(this.enrollments.length);
+  }
+
+  async clean(): Promise<void> {
+
   }
 }

@@ -1,6 +1,6 @@
-import Enrollment from "../entity/Enrollment";
-import RepositoryAbstractFactory from "../factory/RepositoryAbstractFactory";
-import EnrollmentRepository from "../repository/EnrollmentRepository";
+import Enrollment from "../../entity/Enrollment";
+import RepositoryAbstractFactory from "../../factory/RepositoryAbstractFactory";
+import EnrollmentRepository from "../../repository/EnrollmentRepository";
 
 export default class CancelEnrollment {
   enrollmentRepository: EnrollmentRepository;

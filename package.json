@@ -6,11 +6,14 @@
   "scripts": {
     "tsc:init": "tsc --init",
     "tsc:build": "tsc",
-    "test": "tsc && jest ./dist"
+    "test": "tsc && jest ./dist --detectOpenHandles",
+    "mytest": "jest ./dist/test/usecase/CancelEnrollment.test.js"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "mysql2": "^2.3.3",
+    "pg-promise": "^10.11.1",
     "typescript": "^4.4.2"
   },
   "devDependencies": {

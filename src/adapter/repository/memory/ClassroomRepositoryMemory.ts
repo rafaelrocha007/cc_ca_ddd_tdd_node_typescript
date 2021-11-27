@@ -33,12 +33,16 @@ export default class ClassroomRepositoryMemory implements ClassroomRepository {
     ];
   }
 
-  findByCode(level: string, module: string, code: string): Classroom {
+  async findByCode(
+    level: string,
+    module: string,
+    code: string
+  ): Promise<Classroom> {
     const clazz = this.classrooms.find(
       (clazz: any) =>
         clazz.code === code && clazz.module === module && clazz.level === level
     );
     if (!clazz) throw new Error("Class not found");
-    return clazz;
+    return Promise.resolve(clazz);
   }
 }

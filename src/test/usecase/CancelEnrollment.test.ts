@@ -1,22 +1,28 @@
 import Enrollment from "../../domain/entity/Enrollment";
-import CancelEnrollment from "../../domain/usecase/CancelEnrollment";
-import EnrollStudent from "../../domain/usecase/EnrollStudent";
-import RepositoryMemoryFactory from "../../adapter/factory/RepositoryMemoryFactory";
+import EnrollStudent from "../../domain/usecase/EnrollStudent/EnrollStudent";
+import CancelEnrollment from "../../domain/usecase/CancelEnrollment/CancelEnrollment";
+import RepositoryDatabaseFactory from "../../adapter/factory/RepositoryDatabaseFactory";
+import MySqlConnectionPool from "../../infra/database/MySqlConnectionPool";
 
 let enrollStudent: EnrollStudent;
 let cancelEnrollment: CancelEnrollment;
 
 describe("Enroll Student use case", () => {
-  beforeEach(function () {
-    const repositoryFactory = new RepositoryMemoryFactory();
+  beforeEach(async () => {
+    const repositoryFactory = new RepositoryDatabaseFactory();
     enrollStudent = new EnrollStudent(repositoryFactory);
     cancelEnrollment = new CancelEnrollment(repositoryFactory);
+    await repositoryFactory.createEnrollmentRepository().clean();
   });
 
-  test("Should cancel enrollment", () => {
+  afterAll(async () => {
+    MySqlConnectionPool.getInstance().end();
+  });
+
+  test("Should cancel enrollment", async () => {
     const cpf = "755.525.774-26";
     const installments = 12;
-    enrollStudent.execute({
+    await enrollStudent.execute({
       student: {
         name: "Maria Carolina Fonseca",
         cpf,
@@ -27,10 +33,12 @@ describe("Enroll Student use case", () => {
       class: "A",
       installments,
     });
-    cancelEnrollment.execute({
+    await cancelEnrollment.execute({
       code: "2021EM3A0001",
     });
-    const enrollment = enrollStudent.enrollmentRepository.get("2021EM3A0001");
-    expect(enrollment.status).toBe(Enrollment.STATUS_CANCELLED);
+    const enrollment = await enrollStudent.enrollmentRepository.get(
+      "2021EM3A0001"
+    );
+    expect(enrollment?.status).toBe(Enrollment.STATUS_CANCELLED);
   });
 });
