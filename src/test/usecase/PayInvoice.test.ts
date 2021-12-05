@@ -28,14 +28,12 @@ describe("Enroll Student use case", () => {
       const cpf = "755.525.774-26";
       const installments = 12;
       await enrollStudent.execute({
-        student: {
-          name: "Maria Carolina Fonseca",
-          cpf,
-          birthDate: "2002-03-12",
-        },
+        studentName: "Maria Carolina Fonseca",
+        studentCpf: cpf,
+        studentBirthDate: "2002-03-12",
         level: "EM",
         module: "3",
-        class: "A",
+        classroom: "A",
         installments,
       });
       await payInvoice.execute({
@@ -51,38 +49,32 @@ describe("Enroll Student use case", () => {
   });
 
   test("Should pay overdue invoice", async () => {
-    try {
-      const cpf = "755.525.774-26";
-      const installments = 10;
-      await enrollStudent.execute({
-        student: {
-          name: "Maria Carolina Fonseca",
-          cpf,
-          birthDate: "2002-03-12",
-        },
-        level: "EM",
-        module: "3",
-        class: "A",
-        installments,
-      });
-      const invoiceAmount = 170000;
-      const penaltyAmount = 17000;
-      const interestAmount = 8500;
-      await payInvoice.execute({
-        code: "2021EM3A0001",
-        month: 1,
-        year: 2021,
-        amount: invoiceAmount + penaltyAmount + interestAmount,
-        paymentDate: mockedDate,
-      });
-      const getEnrollmentOutputData = await getEnrollment.execute(
-        "2021EM3A0001",
-        mockedDate
-      );
-      const paidInvoice = getEnrollmentOutputData.invoices[0];
-      expect(paidInvoice.balance).toBe(0);
-    } catch (e) {
-      console.log(e);
-    }
+    const cpf = "755.525.774-26";
+    const installments = 10;
+    await enrollStudent.execute({
+      studentName: "Maria Carolina Fonseca",
+      studentCpf: cpf,
+      studentBirthDate: "2002-03-12",
+      level: "EM",
+      module: "3",
+      classroom: "A",
+      installments,
+    });
+    const invoiceAmount = 170000;
+    const penaltyAmount = 17000;
+    const interestAmount = 8500;
+    await payInvoice.execute({
+      code: "2021EM3A0001",
+      month: 1,
+      year: 2021,
+      amount: invoiceAmount + penaltyAmount + interestAmount,
+      paymentDate: mockedDate,
+    });
+    const getEnrollmentOutputData = await getEnrollment.execute(
+      "2021EM3A0001",
+      mockedDate
+    );
+    const paidInvoice = getEnrollmentOutputData.invoices[0];
+    expect(paidInvoice.balance).toBe(0);
   });
 });

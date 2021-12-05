@@ -1,6 +1,7 @@
 import EnrollStudent from "../../domain/usecase/EnrollStudent/EnrollStudent";
 import RepositoryDatabaseFactory from "../../adapter/factory/RepositoryDatabaseFactory";
 import MySqlConnectionPool from "../../infra/database/MySqlConnectionPool";
+import EnrollStudentInputData from "../../domain/usecase/EnrollStudent/EnrollStudentInputData";
 
 let enrollStudent: EnrollStudent;
 
@@ -18,11 +19,16 @@ describe("Enroll Student use case", () => {
   test("Should not enroll student without valid student name", async () => {
     expect.assertions(1);
     try {
-      await enrollStudent.execute({
-        student: {
-          name: "Ana",
-        },
+      const enrollStudentInputData = new EnrollStudentInputData({
+        studentName: "Ana",
+        studentCpf: "",
+        studentBirthDate: "",
+        classroom: "",
+        installments: 0,
+        level: "",
+        module: "",
       });
+      await enrollStudent.execute(enrollStudentInputData);
       expect("1").toBe("1");
     } catch (e) {
       expect(e).toEqual(new Error("Invalid name"));
@@ -31,12 +37,16 @@ describe("Enroll Student use case", () => {
 
   test("Should not enroll without valid student cpf", async () => {
     try {
-      await enrollStudent.execute({
-        student: {
-          name: "Ana Silva",
-          cpf: "123.456.789-99",
-        },
+      const enrollStudentInputData = new EnrollStudentInputData({
+        studentName: "Maria Carolina",
+        studentCpf: "123.456.789-99",
+        studentBirthDate: "",
+        classroom: "",
+        installments: 0,
+        level: "",
+        module: "",
       });
+      await enrollStudent.execute(enrollStudentInputData);
     } catch (e) {
       expect(e).toEqual(new Error("Invalid cpf"));
     }
@@ -44,18 +54,17 @@ describe("Enroll Student use case", () => {
 
   test("Should not enroll duplicated student", async () => {
     try {
-      const enrollmentRequest = {
-        student: {
-          name: "Maria Carolina Fonseca",
-          cpf: "755.525.774-26",
-          birthDate: "2002-03-12",
-        },
+      const enrollStudentInputData = new EnrollStudentInputData({
+        studentName: "Maria Carolina Fonseca",
+        studentCpf: "755.525.774-26",
+        studentBirthDate: "2002-03-12",
         level: "EM",
         module: "3",
-        class: "A",
-      };
-      await enrollStudent.execute(enrollmentRequest);
-      await enrollStudent.execute(enrollmentRequest);
+        classroom: "A",
+        installments: 12,
+      });
+      await enrollStudent.execute(enrollStudentInputData);
+      await enrollStudent.execute(enrollStudentInputData);
     } catch (e) {
       expect(e).toEqual(
         new Error("Enrollment with duplicated student is not allowed")
@@ -65,28 +74,26 @@ describe("Enroll Student use case", () => {
 
   test("Should enroll a valid student", async () => {
     await enrollStudent.execute({
-      student: {
-        name: "Maria Carolina Fonseca",
-        cpf: "755.525.774-26",
-        birthDate: "2002-03-12",
-      },
+      studentName: "Maria Carolina Fonseca",
+      studentCpf: "755.525.774-26",
+      studentBirthDate: "2002-03-12",
       level: "EM",
       module: "3",
-      class: "A",
+      classroom: "A",
+      installments: 12,
     });
     const enrollment1 = await enrollStudent.enrollmentRepository.get(
       "2021EM3A0001"
     );
     expect(enrollment1?.getCode()).toBe("2021EM3A0001");
     await enrollStudent.execute({
-      student: {
-        name: "Rafael Rocha",
-        cpf: "088.192.736-83",
-        birthDate: "2002-09-13",
-      },
+      studentName: "Rafael Rocha",
+      studentCpf: "088.192.736-83",
+      studentBirthDate: "2002-09-13",
       level: "EM",
       module: "3",
-      class: "A",
+      classroom: "A",
+      installments: 12,
     });
     const enrollment2 = await enrollStudent.enrollmentRepository.get(
       "2021EM3A0002"
@@ -96,14 +103,13 @@ describe("Enroll Student use case", () => {
 
   test("Should generate enrollment code", async () => {
     await enrollStudent.execute({
-      student: {
-        name: "Maria Carolina Fonseca",
-        cpf: "755.525.774-26",
-        birthDate: "2002-03-12",
-      },
+      studentName: "Maria Carolina Fonseca",
+      studentCpf: "755.525.774-26",
+      studentBirthDate: "2002-03-12",
       level: "EM",
       module: "3",
-      class: "A",
+      classroom: "A",
+      installments: 12,
     });
     const enrollment = await enrollStudent.enrollmentRepository.get(
       "2021EM3A0001"
@@ -114,14 +120,13 @@ describe("Enroll Student use case", () => {
   test("Should not enroll student below minimum age", async () => {
     try {
       await enrollStudent.execute({
-        student: {
-          name: "Maria Carolina Fonseca",
-          cpf: "755.525.774-26",
-          birthDate: "2010-03-12",
-        },
+        studentName: "Maria Carolina Fonseca",
+        studentCpf: "755.525.774-26",
+        studentBirthDate: "2010-03-12",
         level: "EM",
         module: "3",
-        class: "A",
+        classroom: "A",
+        installments: 12,
       });
     } catch (e) {
       expect(e).toEqual(new Error("Student below minimum age"));
@@ -131,34 +136,31 @@ describe("Enroll Student use case", () => {
   test("Should not enroll student over class capacity", async () => {
     try {
       await enrollStudent.execute({
-        student: {
-          name: "Aluno Teste Um",
-          cpf: "755.525.774-26",
-          birthDate: "2002-03-12",
-        },
+        studentName: "Aluno Teste Um",
+        studentCpf: "755.525.774-26",
+        studentBirthDate: "2002-03-12",
         level: "EM",
         module: "3",
-        class: "A",
+        classroom: "A",
+        installments: 12,
       });
       await enrollStudent.execute({
-        student: {
-          name: "Aluno Teste Dois",
-          cpf: "75706622027",
-          birthDate: "2002-03-12",
-        },
+        studentName: "Aluno Teste Dois",
+        studentCpf: "75706622027",
+        studentBirthDate: "2002-03-12",
         level: "EM",
         module: "3",
-        class: "A",
+        classroom: "A",
+        installments: 12,
       });
       await enrollStudent.execute({
-        student: {
-          name: "Aluno Teste Três",
-          cpf: "90287586073",
-          birthDate: "2002-03-12",
-        },
+        studentName: "Aluno Teste Três",
+        studentCpf: "90287586073",
+        studentBirthDate: "2002-03-12",
         level: "EM",
         module: "3",
-        class: "A",
+        classroom: "A",
+        installments: 12,
       });
     } catch (e) {
       expect(e).toEqual(new Error("Class is over capacity"));
@@ -168,14 +170,13 @@ describe("Enroll Student use case", () => {
   test("Should not enroll after the end of the class", async () => {
     try {
       await enrollStudent.execute({
-        student: {
-          name: "Maria Carolina Fonseca",
-          cpf: "755.525.774-26",
-          birthDate: "2002-03-12",
-        },
+        studentName: "Maria Carolina Fonseca",
+        studentCpf: "755.525.774-26",
+        studentBirthDate: "2002-03-12",
         level: "EM",
         module: "3",
-        class: "B",
+        classroom: "B",
+        installments: 12,
       });
     } catch (e) {
       expect(e).toEqual(new Error("Class is already finished"));
@@ -185,14 +186,14 @@ describe("Enroll Student use case", () => {
   test("Should not enroll after 25% of the total hours of the course", async () => {
     try {
       await enrollStudent.execute({
-        student: {
-          name: "Maria Carolina Fonseca",
-          cpf: "755.525.774-26",
-          birthDate: "2002-03-12",
-        },
+        studentName: "Maria Carolina Fonseca",
+        studentCpf: "755.525.774-26",
+        studentBirthDate: "2002-03-12",
+
         level: "EM",
         module: "3",
-        class: "C",
+        classroom: "C",
+        installments: 12,
       });
     } catch (e) {
       expect(e).toEqual(new Error("Class is already started"));
@@ -203,14 +204,12 @@ describe("Enroll Student use case", () => {
     const cpf = "755.525.774-26";
     const installments = 12;
     await enrollStudent.execute({
-      student: {
-        name: "Maria Carolina Fonseca",
-        cpf,
-        birthDate: "2002-03-12",
-      },
+      studentName: "Maria Carolina Fonseca",
+      studentCpf: cpf,
+      studentBirthDate: "2002-03-12",
       level: "EM",
       module: "3",
-      class: "A",
+      classroom: "A",
       installments,
     });
     const module = await enrollStudent.moduleRepository.findByCode("EM", "3");

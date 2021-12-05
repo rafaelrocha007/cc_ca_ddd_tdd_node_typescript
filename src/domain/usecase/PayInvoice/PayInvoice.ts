@@ -15,11 +15,12 @@ export default class PayInvoice {
     year,
     amount,
     paymentDate,
-  }: PayInvoiceInputData) {
+  }: PayInvoiceInputData):Promise<void> {
     const enrollment = await this.enrollmentRepository.get(code);
     if (!enrollment) {
       throw new Error("Enrollment not found");
     }
-    Promise.resolve(enrollment.payInvoice(month, year, amount, paymentDate));
+    await enrollment.payInvoice(month, year, amount, paymentDate);
+    await this.enrollmentRepository.update(enrollment);
   }
 }

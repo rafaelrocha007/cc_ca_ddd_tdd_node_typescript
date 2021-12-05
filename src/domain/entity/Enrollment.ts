@@ -29,7 +29,8 @@ export default class Enrollment {
     classroom: Classroom,
     issueDate: Date,
     sequence: number,
-    installments: number = 12
+    installments: number = 12,
+    status = Enrollment.STATUS_ACTIVE
   ) {
     if (student.getAge() < module.minimumAge) {
       throw new Error("Student below minimum age");
@@ -55,7 +56,7 @@ export default class Enrollment {
       issueDate,
       sequence
     );
-    this.status = Enrollment.STATUS_ACTIVE;
+    this.status = status;
     this.generateInvoices();
   }
 

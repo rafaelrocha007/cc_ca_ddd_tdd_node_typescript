@@ -23,22 +23,16 @@ describe("Enroll Student use case", () => {
     const cpf = "755.525.774-26";
     const installments = 12;
     await enrollStudent.execute({
-      student: {
-        name: "Maria Carolina Fonseca",
-        cpf,
-        birthDate: "2002-03-12",
-      },
+      studentName: "Maria Carolina Fonseca",
+      studentCpf: cpf,
+      studentBirthDate: "2002-03-12",
       level: "EM",
       module: "3",
-      class: "A",
+      classroom: "A",
       installments,
     });
-    await cancelEnrollment.execute({
-      code: "2021EM3A0001",
-    });
-    const enrollment = await enrollStudent.enrollmentRepository.get(
-      "2021EM3A0001"
-    );
+    await cancelEnrollment.execute("2021EM3A0001");
+    const enrollment = await enrollStudent.enrollmentRepository.get("2021EM3A0001");
     expect(enrollment?.status).toBe(Enrollment.STATUS_CANCELLED);
   });
 });

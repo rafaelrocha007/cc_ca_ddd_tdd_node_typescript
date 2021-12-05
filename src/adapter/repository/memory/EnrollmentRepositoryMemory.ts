@@ -14,11 +14,11 @@ export default class EnrollmentRepositoryMemory
     this.enrollments.push(enrollment);
   }
 
-  async updateStatus(code: string, status: string): Promise<void> {
+  async update(enrollment: Enrollment): Promise<void> {
     let foundIndex = this.enrollments.findIndex(
-      (enrollment) => enrollment.getCode() === code
+      (enrollmt) => enrollmt.getCode() === enrollment.getCode()
     );
-    this.enrollments[foundIndex].status = Enrollment.STATUS_CANCELLED;
+    this.enrollments[foundIndex] = enrollment;
   }
 
   async findAllByClassroom(
@@ -58,7 +58,5 @@ export default class EnrollmentRepositoryMemory
     return Promise.resolve(this.enrollments.length);
   }
 
-  async clean(): Promise<void> {
-
-  }
+  async clean(): Promise<void> {}
 }

@@ -2,7 +2,7 @@ import Enrollment from "../entity/Enrollment";
 
 export default interface EnrollmentRepository {
   save(enrollment: Enrollment): Promise<void>;
-  updateStatus(code: string, status: string): Promise<void>;
+  update(enrollment: Enrollment): Promise<void>;
   findAllByClassroom(
     level: string,
     module: string,

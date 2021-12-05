@@ -27,14 +27,12 @@ describe("Enroll Student use case", () => {
       const cpf = "755.525.774-26";
       const installments = 12;
       await enrollStudent.execute({
-        student: {
-          name: "Maria Carolina Fonseca",
-          cpf,
-          birthDate: "2002-03-12",
-        },
+        studentName: "Maria Carolina Fonseca",
+        studentCpf: cpf,
+        studentBirthDate: "2002-03-12",
         level: "EM",
         module: "3",
-        class: "A",
+        classroom: "A",
         installments,
       });
       mockedDate = new Date("2021-01-01");
@@ -55,14 +53,12 @@ describe("Enroll Student use case", () => {
       const cpf = "755.525.774-26";
       const installments = 12;
       await enrollStudent.execute({
-        student: {
-          name: "Maria Carolina Fonseca",
-          cpf,
-          birthDate: "2002-03-12",
-        },
+        studentName: "Maria Carolina Fonseca",
+        studentCpf: cpf,
+        studentBirthDate: "2002-03-12",
         level: "EM",
         module: "3",
-        class: "A",
+        classroom: "A",
         installments,
       });
       const { invoices } = await getEnrollment.execute(
@@ -81,14 +77,12 @@ describe("Enroll Student use case", () => {
       const cpf = "755.525.774-26";
       const installments = 10;
       await enrollStudent.execute({
-        student: {
-          name: "Maria Carolina Fonseca",
-          cpf,
-          birthDate: "2002-03-12",
-        },
+        studentName: "Maria Carolina Fonseca",
+        studentCpf: cpf,
+        studentBirthDate: "2002-03-12",
         level: "EM",
         module: "3",
-        class: "A",
+        classroom: "A",
         installments,
       });
       mockedDate = new Date("2021-01-10");

@@ -28,10 +28,6 @@ export default class EnrollmentRepositoryDatabase
     this.classroomRepository = classroomRepository;
   }
 
-  updateStatus(code: string, status: string): Promise<void> {
-    throw new Error("Method not implemented.");
-  }
-
   async get(code: string): Promise<Enrollment | undefined> {
     const enrollmentData = await MySqlConnectionPool.one(
       "select * from enrollment where code = ?",
@@ -64,7 +60,8 @@ export default class EnrollmentRepositoryDatabase
       classroom,
       enrollmentData.issue_date,
       enrollmentData.sequence,
-      enrollmentData.installments
+      enrollmentData.installments,
+      enrollmentData.status
     );
     const invoicesData = await MySqlConnectionPool.query(
       "select * from invoice where enrollment = ?",
@@ -86,7 +83,7 @@ export default class EnrollmentRepositoryDatabase
       for (const invoiceEventData of invoiceEventsData) {
         const invoiceEvent = new InvoiceEvent(
           invoiceEventData.type,
-          invoiceEventData.amount
+          parseInt(invoiceEventData.amount)
         );
         invoiceEvents.push(invoiceEvent);
       }
@@ -139,14 +136,14 @@ export default class EnrollmentRepositoryDatabase
   }
 
   async update(enrollment: Enrollment): Promise<void> {
-    await MySqlConnectionPool.none(
+    await MySqlConnectionPool.query(
       "update enrollment set status = ? where code = ?",
       [enrollment.status, enrollment.code.value]
     );
     for (const invoice of enrollment.invoices) {
       for (const invoiceEvent of invoice.events) {
-        await MySqlConnectionPool.none(
-          "insert into invoice_event (enrollment, month, year, type, amount) values (?, ?, ?, ?, ?) on conflict do nothing",
+        await MySqlConnectionPool.query(
+          "insert into invoice_event (enrollment, month, year, type, amount) values (?, ?, ?, ?, ?) on duplicate key update amount = values(amount)",
           [
             enrollment.code.value,
             invoice.month,

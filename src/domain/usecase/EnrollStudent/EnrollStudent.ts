@@ -5,6 +5,8 @@ import ClassroomRepository from "../../repository/ClassroomRepository";
 import EnrollmentRepository from "../../repository/EnrollmentRepository";
 import LevelRepository from "../../repository/LevelRepository";
 import ModuleRepository from "../../repository/ModuleRepository";
+import EnrollStudentInputData from "./EnrollStudentInputData";
+import EnrollStudentOutputData from "./EnrollStudentOutputData";
 
 export default class EnrollStudent {
   moduleRepository: ModuleRepository;
@@ -19,11 +21,11 @@ export default class EnrollStudent {
     this.enrollmentRepository = repositoryFactory.createEnrollmentRepository();
   }
 
-  async execute(enrollmentRequest: any) {
+  async execute(enrollmentRequest: EnrollStudentInputData): Promise<EnrollStudentOutputData> {
     const student = new Student(
-      enrollmentRequest.student.name,
-      enrollmentRequest.student.cpf,
-      enrollmentRequest.student.birthDate
+      enrollmentRequest.studentName,
+      enrollmentRequest.studentCpf,
+      enrollmentRequest.studentBirthDate
     );
     const level = await this.levelRepository.findByCode(
       enrollmentRequest.level
@@ -35,10 +37,10 @@ export default class EnrollStudent {
     const classroom = await this.classRepository.findByCode(
       level.code,
       module.code,
-      enrollmentRequest.class
+      enrollmentRequest.classroom
     );
     const existingEnrollment = await this.enrollmentRepository.findByCpf(
-      enrollmentRequest.student.cpf
+      enrollmentRequest.studentCpf
     );
     if (existingEnrollment) {
       throw new Error("Enrollment with duplicated student is not allowed")
@@ -64,5 +66,7 @@ export default class EnrollStudent {
       enrollmentRequest.installments
     );
     await this.enrollmentRepository.save(enrollment);
+
+    return new EnrollStudentOutputData('',0,'');
   }
 }
